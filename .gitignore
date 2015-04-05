@@ -4,3 +4,5 @@ logs
 checkouts
 pom.xml
 target
+pom.xml.asc
+doc
