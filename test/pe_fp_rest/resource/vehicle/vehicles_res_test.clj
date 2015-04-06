@@ -17,7 +17,7 @@
             [pe-apptxn-restsupport.version.resource-support-v001]
             [pe-fp-rest.meta :as meta]
             [pe-fp-core.core :as fpcore]
-            [pe-core-testutils.core :as tucore]
+            [pe-datomic-testutils.core :as dtucore]
             [pe-rest-testutils.core :as rtucore]
             [pe-core-utils.core :as ucore]
             [pe-rest-utils.core :as rucore]
@@ -114,12 +114,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fixtures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-fixtures :each (tucore/make-db-refresher-fixture-fn db-uri
-                                                         conn
-                                                         fp-partition
-                                                         (concat fp-schema-files
-                                                                 user-schema-files
-                                                                 apptxn-logging-schema-files)))
+(use-fixtures :each (dtucore/make-db-refresher-fixture-fn db-uri
+                                                          conn
+                                                          fp-partition
+                                                          (concat fp-schema-files
+                                                                  user-schema-files
+                                                                  apptxn-logging-schema-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tests
@@ -281,9 +281,9 @@
                             (is (= "Mazda CX-9" (get resp-veh "fpvehicle/name")))
                             (is (= 24.5 (get resp-veh "fpvehicle/fuel-capacity")))
                             (is (= 87 (get resp-veh "fpvehicle/min-reqd-octane")))
-                            (let [loaded-vehicles (fpcore/vehicles-for-user @conn loaded-user-entid)]
+                            (let [loaded-vehicles (sort-by :fpvehicle/date-added (vec (fpcore/vehicles-for-user @conn loaded-user-entid)))]
                               (is (= 2 (count loaded-vehicles)))
-                              (let [[[loaded-veh-mazda-entid loaded-veh-mazda] _] loaded-vehicles]
+                              (let [[_ [loaded-veh-mazda-entid loaded-veh-mazda]] loaded-vehicles]
                                 (is (= (Long/parseLong resp-veh-entid-str) loaded-veh-mazda-entid))
                                 (is (= "Mazda CX-9" (:fpvehicle/name loaded-veh-mazda)))
                                 (is (= 24.5 (:fpvehicle/fuel-capacity loaded-veh-mazda)))

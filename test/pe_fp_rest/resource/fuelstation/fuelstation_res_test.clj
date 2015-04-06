@@ -20,6 +20,7 @@
             [pe-fp-rest.meta :as meta]
             [pe-fp-core.core :as fpcore]
             [pe-datomic-testutils.core :as dtucore]
+            [pe-user-testutils.core :as utucore]
             [pe-rest-testutils.core :as rtucore]
             [pe-core-utils.core :as ucore]
             [pe-rest-utils.core :as rucore]
@@ -139,11 +140,11 @@
 ;; Fixtures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-fixtures :each (dtucore/make-db-refresher-fixture-fn db-uri
-                                                         conn
-                                                         fp-partition
-                                                         (concat fp-schema-files
-                                                                 user-schema-files
-                                                                 apptxn-logging-schema-files)))
+                                                          conn
+                                                          fp-partition
+                                                          (concat fp-schema-files
+                                                                  user-schema-files
+                                                                  apptxn-logging-schema-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tests

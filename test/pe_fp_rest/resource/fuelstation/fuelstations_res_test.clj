@@ -17,7 +17,7 @@
             [pe-apptxn-restsupport.version.resource-support-v001]
             [pe-fp-rest.meta :as meta]
             [pe-fp-core.core :as fpcore]
-            [pe-core-testutils.core :as tucore]
+            [pe-datomic-testutils.core :as dtucore]
             [pe-rest-testutils.core :as rtucore]
             [pe-core-utils.core :as ucore]
             [pe-rest-utils.core :as rucore]
@@ -113,12 +113,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fixtures
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-fixtures :each (tucore/make-db-refresher-fixture-fn db-uri
-                                                         conn
-                                                         fp-partition
-                                                         (concat fp-schema-files
-                                                                 user-schema-files
-                                                                 apptxn-logging-schema-files)))
+(use-fixtures :each (dtucore/make-db-refresher-fixture-fn db-uri
+                                                          conn
+                                                          fp-partition
+                                                          (concat fp-schema-files
+                                                                  user-schema-files
+                                                                  apptxn-logging-schema-files)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tests
@@ -300,9 +300,9 @@
                             (is (= "28278" (get resp-fs "fpfuelstation/zip")))
                             (is (= 82.29103 (get resp-fs "fpfuelstation/longitude")))
                             (is (= -14.7002 (get resp-fs "fpfuelstation/latitude")))
-                            (let [loaded-fuelstations (fpcore/fuelstations-for-user @conn loaded-user-entid)]
+                            (let [loaded-fuelstations (sort-by :fpfuelstation/date-added (vec (fpcore/fuelstations-for-user @conn loaded-user-entid)))]
                               (is (= 2 (count loaded-fuelstations)))
-                              (let [[[loaded-fs-eds-entid loaded-fs-eds] _] loaded-fuelstations]
+                              (let [[_ [loaded-fs-eds-entid loaded-fs-eds]] loaded-fuelstations]
                                 (is (= (Long/parseLong resp-fs-entid-str) loaded-fs-eds-entid))
                                 (is (= "Ed's" (:fpfuelstation/name loaded-fs-eds)))
                                 (is (= "103 Main Street" (:fpfuelstation/street loaded-fs-eds)))

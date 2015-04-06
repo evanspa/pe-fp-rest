@@ -40,6 +40,7 @@
                                   [pe-user-rest "0.0.2"]
                                   [pe-rest-testutils "0.0.2"]
                                   [pe-user-testutils "0.0.3"]
+                                  [pe-datomic-testutils "0.0.2"]
                                   [ring-server "0.3.1"]
                                   [ring-mock "0.1.5"]]}
              :test {:resource-paths ["test-resources"]}}
