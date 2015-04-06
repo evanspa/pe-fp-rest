@@ -169,6 +169,7 @@
         (is (empty? (fpcore/vehicles-for-user @conn loaded-user-entid)))
         (let [vehicle {"fpvehicle/name" "300Z"
                        "fpvehicle/fuel-capacity" 19.0
+                       "fpvehicle/date-added" "Mon, 01 Sep 2014 11:25:57 GMT"
                        "fpvehicle/min-reqd-octane" 93}
               vehicles-uri (str base-url
                                 entity-uri-prefix
@@ -231,6 +232,7 @@
                     ;; Create 2nd vehicle
                     (let [vehicle {"fpvehicle/name" "Mazda CX-9"
                                    "fpvehicle/fuel-capacity" 24.5
+                                   "fpvehicle/date-added" "Tue, 02 Sep 2014 11:25:57 GMT"
                                    "fpvehicle/min-reqd-octane" 87}
                           req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
                                                           (meta/mt-subtype-vehicle fpmt-subtype-prefix)
@@ -283,7 +285,7 @@
                             (is (= 87 (get resp-veh "fpvehicle/min-reqd-octane")))
                             (let [loaded-vehicles (sort-by :fpvehicle/date-added (vec (fpcore/vehicles-for-user @conn loaded-user-entid)))]
                               (is (= 2 (count loaded-vehicles)))
-                              (let [[_ [loaded-veh-mazda-entid loaded-veh-mazda]] loaded-vehicles]
+                              (let [[[loaded-veh-mazda-entid loaded-veh-mazda] _] loaded-vehicles]
                                 (is (= (Long/parseLong resp-veh-entid-str) loaded-veh-mazda-entid))
                                 (is (= "Mazda CX-9" (:fpvehicle/name loaded-veh-mazda)))
                                 (is (= 24.5 (:fpvehicle/fuel-capacity loaded-veh-mazda)))

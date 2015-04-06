@@ -171,6 +171,7 @@
                            "fpfuelstation/city" "Charlotte"
                            "fpfuelstation/state" "NC"
                            "fpfuelstation/zip" "28277"
+                           "fpfuelstation/date-added" "Mon, 01 Sep 2014 11:25:57 GMT"
                            "fpfuelstation/longitude" 80.29103
                            "fpfuelstation/latitude" -13.7002}
               fuelstations-uri (str base-url
@@ -245,6 +246,7 @@
                                        "fpfuelstation/city" "Providence"
                                        "fpfuelstation/state" "NC"
                                        "fpfuelstation/zip" "28278"
+                                       "fpfuelstation/date-added" "Tue, 02 Sep 2014 11:25:57 GMT"
                                        "fpfuelstation/longitude" 82.29103
                                        "fpfuelstation/latitude" -14.7002}
                           req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
@@ -302,7 +304,7 @@
                             (is (= -14.7002 (get resp-fs "fpfuelstation/latitude")))
                             (let [loaded-fuelstations (sort-by :fpfuelstation/date-added (vec (fpcore/fuelstations-for-user @conn loaded-user-entid)))]
                               (is (= 2 (count loaded-fuelstations)))
-                              (let [[_ [loaded-fs-eds-entid loaded-fs-eds]] loaded-fuelstations]
+                              (let [[[loaded-fs-eds-entid loaded-fs-eds] _] loaded-fuelstations]
                                 (is (= (Long/parseLong resp-fs-entid-str) loaded-fs-eds-entid))
                                 (is (= "Ed's" (:fpfuelstation/name loaded-fs-eds)))
                                 (is (= "103 Main Street" (:fpfuelstation/street loaded-fs-eds)))
