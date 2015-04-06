@@ -5,7 +5,7 @@
 A Clojure library providing REST API functionality for the fuel purchase
 application domain abstractions.
 
-pe-fp-rest essentially exposes the functionality of
+pe-fp-rest exposes the functionality of
 [pe-fp-core](https://github.com/evanspa/pe-fp-core) as a REST API using
 [Liberator](http://clojure-liberator.github.io/liberator/).
 
