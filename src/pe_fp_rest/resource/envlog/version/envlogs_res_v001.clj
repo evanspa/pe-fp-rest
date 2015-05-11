@@ -14,19 +14,27 @@
 ;; 0.0.1 Validator function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod new-envlog-validator-fn meta/v001
-  [version body-data]
-  (fpval/create-environmentlog-validation-mask body-data))
+  [version envlog]
+  (fpval/create-environmentlog-validation-mask envlog))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 body-data transformation functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
-  [version body-data]
-  (envlogresutils/envlog-data-in-transform body-data))
+  [version
+   conn
+   _   ;for 'envlogs' resource, the 'in' would only ever be a NEW (to-be-created) envlog, so it by definition wouldn't have an entid
+   envlog
+   apptxnlogger]
+  (envlogresutils/envlog-data-in-transform envlog))
 
 (defmethod body-data-out-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   envlog-entid
+   envlog
+   apptxnlogger]
+  (identity envlog))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save new envlog function

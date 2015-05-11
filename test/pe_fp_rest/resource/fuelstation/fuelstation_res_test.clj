@@ -180,8 +180,6 @@
       (let [hdrs (:headers resp)
             resp-body-stream (:body resp)
             user-location-str (get hdrs "location")
-            user-last-modified-str (get hdrs "last-modified")
-            last-modified (ucore/rfc7231str->instant user-last-modified-str)
             resp-user-entid-str (rtucore/last-url-part user-location-str)
             pct (rucore/parse-media-type (get hdrs "Content-Type"))
             charset (get rumeta/char-sets (:charset pct))

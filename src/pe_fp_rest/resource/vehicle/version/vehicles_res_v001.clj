@@ -14,26 +14,34 @@
 ;; 0.0.1 Validator function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod new-vehicle-validator-fn meta/v001
-  [version body-data]
-  (fpval/create-vehicle-validation-mask body-data))
+  [version vehicle]
+  (fpval/create-vehicle-validation-mask vehicle))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 body-data transformation functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   _   ;for 'vehicles' resource, the 'in' would only ever be a NEW (to-be-created) vehicle, so it by definition wouldn't have an entid
+   vehicle
+   apptxnlogger]
+  (identity vehicle))
 
 (defmethod body-data-out-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   vehicle-entid
+   vehicle
+   apptxnlogger]
+  (identity vehicle))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Name extraction functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod extract-name-fn meta/v001
-  [version body-data]
-  (:fpvehicle/name body-data))
+  [version vehicle]
+  (:fpvehicle/name vehicle))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Entity lookup-by-name functions

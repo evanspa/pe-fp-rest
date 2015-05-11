@@ -12,23 +12,36 @@
 ;; 0.0.1 Validator function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-fuelstation-validator-fn meta/v001
-  [version body-data]
-  (fpval/save-fuelstation-validation-mask body-data))
+  [version fuelstation]
+  (fpval/save-fuelstation-validation-mask fuelstation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 body-data transformation functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   fuelstation-entid
+   fuelstation
+   apptxnlogger]
+  (identity fuelstation))
 
 (defmethod body-data-out-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   fuelstation-entid
+   fuelstation
+   apptxnlogger]
+  (identity fuelstation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save fuel station function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-fuelstation-fn meta/v001
-  [version conn partition user-entid fuelstation-entid fuelstation]
+  [version
+   conn
+   partition
+   user-entid
+   fuelstation-entid
+   fuelstation]
   (fpcore/save-fuelstation-txnmap user-entid fuelstation-entid fuelstation))

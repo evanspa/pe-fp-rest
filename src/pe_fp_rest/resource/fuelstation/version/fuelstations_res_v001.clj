@@ -12,19 +12,27 @@
 ;; 0.0.1 Validator function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod new-fuelstation-validator-fn meta/v001
-  [version body-data]
-  (fpval/create-fuelstation-validation-mask body-data))
+  [version fuelstation]
+  (fpval/create-fuelstation-validation-mask fuelstation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 body-data transformation functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   _   ;for 'fuelstations' resource, the 'in' would only ever be a NEW (to-be-created) fuel station, so it by definition wouldn't have an entid
+   fuelstation
+   apptxnlogger]
+  (identity fuelstation))
 
 (defmethod body-data-out-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   fuelstation-entid
+   fuelstation
+   apptxnlogger]
+  (identity fuelstation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save new fuel station function

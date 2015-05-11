@@ -267,20 +267,16 @@
                 (testing "headers and body of created envlog"
                   (let [hdrs (:headers resp)
                         resp-body-stream (:body resp)
-                        envlog-location-str (get hdrs "location")
-                        envlog-last-modified-str (get hdrs "last-modified")]
+                        envlog-location-str (get hdrs "location")]
                     (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
                     (is (not (nil? resp-body-stream)))
                     (is (not (nil? envlog-location-str)))
-                    (is (not (nil? envlog-last-modified-str)))
-                    (let [last-modified (ucore/rfc7231str->instant envlog-last-modified-str)
-                          resp-envlog-entid-str (rtucore/last-url-part envlog-location-str)
+                    (let [resp-envlog-entid-str (rtucore/last-url-part envlog-location-str)
                           pct (rucore/parse-media-type (get hdrs "Content-Type"))
                           charset (get rumeta/char-sets (:charset pct))
                           resp-envlog (rucore/read-res pct resp-body-stream charset)
                           resp-envlog-veh-link (get resp-envlog "fpenvironmentlog/vehicle")
                           resp-envlog-veh-entid (Long/parseLong (rtucore/last-url-part resp-envlog-veh-link))]
-                      (is (not (nil? last-modified)))
                       (is (not (nil? resp-envlog-entid-str)))
                       (is (not (nil? resp-envlog)))
                       (is (= veh-location-str resp-envlog-veh-link))

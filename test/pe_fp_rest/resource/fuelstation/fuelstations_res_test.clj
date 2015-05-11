@@ -154,8 +154,6 @@
       (let [hdrs (:headers resp)
             resp-body-stream (:body resp)
             user-location-str (get hdrs "location")
-            user-last-modified-str (get hdrs "last-modified")
-            last-modified (ucore/rfc7231str->instant user-last-modified-str)
             resp-user-entid-str (rtucore/last-url-part user-location-str)
             pct (rucore/parse-media-type (get hdrs "Content-Type"))
             charset (get rumeta/char-sets (:charset pct))
@@ -175,12 +173,12 @@
                            "fpfuelstation/longitude" 80.29103
                            "fpfuelstation/latitude" -13.7002}
               fuelstations-uri (str base-url
-                                entity-uri-prefix
-                                usermeta/pathcomp-users
-                                "/"
-                                resp-user-entid-str
-                                "/"
-                                meta/pathcomp-fuelstations)
+                                    entity-uri-prefix
+                                    usermeta/pathcomp-users
+                                    "/"
+                                    resp-user-entid-str
+                                    "/"
+                                    meta/pathcomp-fuelstations)
               req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
                                               (meta/mt-subtype-fuelstation fpmt-subtype-prefix)
                                               meta/v001
@@ -207,18 +205,14 @@
           (testing "headers and body of created 300Z fuelstation"
             (let [hdrs (:headers resp)
                   resp-body-stream (:body resp)
-                  fs-location-str (get hdrs "location")
-                  fs-last-modified-str (get hdrs "last-modified")]
+                  fs-location-str (get hdrs "location")]
               (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
               (is (not (nil? resp-body-stream)))
               (is (not (nil? fs-location-str)))
-              (is (not (nil? fs-last-modified-str)))
-              (let [last-modified (ucore/rfc7231str->instant fs-last-modified-str)
-                    resp-fs-entid-str (rtucore/last-url-part fs-location-str)
+              (let [resp-fs-entid-str (rtucore/last-url-part fs-location-str)
                     pct (rucore/parse-media-type (get hdrs "Content-Type"))
                     charset (get rumeta/char-sets (:charset pct))
                     resp-fs (rucore/read-res pct resp-body-stream charset)]
-                (is (not (nil? last-modified)))
                 (is (not (nil? resp-fs-entid-str)))
                 (is (not (nil? resp-fs)))
                 (is (= "Joe's" (get resp-fs "fpfuelstation/name")))
@@ -281,18 +275,14 @@
                       (testing "headers and body of created Ed's fuel station"
                         (let [hdrs (:headers resp)
                               resp-body-stream (:body resp)
-                              fs-location-str (get hdrs "location")
-                              fs-last-modified-str (get hdrs "last-modified")]
+                              fs-location-str (get hdrs "location")]
                           (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
                           (is (not (nil? resp-body-stream)))
                           (is (not (nil? fs-location-str)))
-                          (is (not (nil? fs-last-modified-str)))
-                          (let [last-modified (ucore/rfc7231str->instant fs-last-modified-str)
-                                resp-fs-entid-str (rtucore/last-url-part fs-location-str)
+                          (let [resp-fs-entid-str (rtucore/last-url-part fs-location-str)
                                 pct (rucore/parse-media-type (get hdrs "Content-Type"))
                                 charset (get rumeta/char-sets (:charset pct))
                                 resp-fs (rucore/read-res pct resp-body-stream charset)]
-                            (is (not (nil? last-modified)))
                             (is (not (nil? resp-fs-entid-str)))
                             (is (not (nil? resp-fs)))
                             (is (= "Ed's" (get resp-fs "fpfuelstation/name")))
@@ -302,7 +292,9 @@
                             (is (= "28278" (get resp-fs "fpfuelstation/zip")))
                             (is (= 82.29103 (get resp-fs "fpfuelstation/longitude")))
                             (is (= -14.7002 (get resp-fs "fpfuelstation/latitude")))
-                            (let [loaded-fuelstations (sort-by :fpfuelstation/date-added (vec (fpcore/fuelstations-for-user @conn loaded-user-entid)))]
+                            (let [loaded-fuelstations (sort-by #(:fpfuelstation/date-added (second %))
+                                                               #(compare %2 %1)
+                                                               (vec (fpcore/fuelstations-for-user @conn loaded-user-entid)))]
                               (is (= 2 (count loaded-fuelstations)))
                               (let [[[loaded-fs-eds-entid loaded-fs-eds] _] loaded-fuelstations]
                                 (is (= (Long/parseLong resp-fs-entid-str) loaded-fs-eds-entid))

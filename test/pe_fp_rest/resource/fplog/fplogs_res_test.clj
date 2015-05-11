@@ -408,14 +408,11 @@
                                   (testing "headers and body of created fplog"
                                     (let [hdrs (:headers resp)
                                           resp-body-stream (:body resp)
-                                          fplog-location-str (get hdrs "location")
-                                          fplog-last-modified-str (get hdrs "last-modified")]
+                                          fplog-location-str (get hdrs "location")]
                                       (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
                                       (is (not (nil? resp-body-stream)))
                                       (is (not (nil? fplog-location-str)))
-                                      (is (not (nil? fplog-last-modified-str)))
-                                      (let [last-modified (ucore/rfc7231str->instant fplog-last-modified-str)
-                                            resp-fplog-entid-str (rtucore/last-url-part fplog-location-str)
+                                      (let [resp-fplog-entid-str (rtucore/last-url-part fplog-location-str)
                                             pct (rucore/parse-media-type (get hdrs "Content-Type"))
                                             charset (get rumeta/char-sets (:charset pct))
                                             resp-fplog (rucore/read-res pct resp-body-stream charset)
@@ -424,7 +421,6 @@
                                             resp-fplog-veh-entid (Long/parseLong (rtucore/last-url-part resp-fplog-veh-link))
                                             resp-fplog-fs-link (get resp-fplog "fpfuelpurchaselog/fuelstation")
                                             resp-fplog-fs-entid (Long/parseLong (rtucore/last-url-part resp-fplog-fs-link))]
-                                        (is (not (nil? last-modified)))
                                         (is (not (nil? resp-fplog-entid-str)))
                                         (is (not (nil? resp-fplog)))
                                         (is (= veh-300zx-location-str resp-fplog-veh-link))

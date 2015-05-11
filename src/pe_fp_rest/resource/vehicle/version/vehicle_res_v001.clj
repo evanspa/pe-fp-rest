@@ -12,23 +12,36 @@
 ;; 0.0.1 Validator function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-vehicle-validator-fn meta/v001
-  [version body-data]
-  (fpval/save-vehicle-validation-mask body-data))
+  [version vehicle]
+  (fpval/save-vehicle-validation-mask vehicle))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 body-data transformation functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   vehicle-entid
+   vehicle
+   apptxnlogger]
+  (identity vehicle))
 
 (defmethod body-data-out-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   vehicle-entid
+   vehicle
+   apptxnlogger]
+  (identity vehicle))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save vehicle function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-vehicle-fn meta/v001
-  [version conn partition user-entid vehicle-entid vehicle]
+  [version
+   conn
+   partition
+   user-entid
+   vehicle-entid
+   vehicle]
   (fpcore/save-vehicle-txnmap user-entid vehicle-entid vehicle))

@@ -178,8 +178,6 @@
       (let [hdrs (:headers resp)
             resp-body-stream (:body resp)
             user-location-str (get hdrs "location")
-            user-last-modified-str (get hdrs "last-modified")
-            last-modified (ucore/rfc7231str->instant user-last-modified-str)
             resp-user-entid-str (rtucore/last-url-part user-location-str)
             pct (rucore/parse-media-type (get hdrs "Content-Type"))
             charset (get rumeta/char-sets (:charset pct))
@@ -225,42 +223,74 @@
               hdrs (:headers resp)
               veh-location-str (get hdrs "location")]
           (testing "status code" (is (= 201 (:status resp))))
-          (let [loaded-vehicles (fpcore/vehicles-for-user @conn loaded-user-entid)]
-            (is (= 1 (count loaded-vehicles)))
-            (let [[[_ loaded-veh-300z]] loaded-vehicles]
-              (is (= "300Z" (:fpvehicle/name loaded-veh-300z)))
-              (is (= 19.0 (:fpvehicle/fuel-capacity loaded-veh-300z)))
-              (is (= 93 (:fpvehicle/min-reqd-octane loaded-veh-300z)))))
-          ;; Update 1st vehicle
-          (let [vehicle {"fpvehicle/name" "Fairlady Z"
-                         "fpvehicle/fuel-capacity" 21.2
-                         "fpvehicle/min-reqd-octane" 94}
-              req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
-                                              (meta/mt-subtype-vehicle fpmt-subtype-prefix)
-                                              meta/v001
-                                              "UTF-8;q=1,ISO-8859-1;q=0"
-                                              "json"
-                                              "en-US"
-                                              :put
-                                              veh-location-str
-                                              fphdr-apptxn-id
-                                              fphdr-useragent-device-make
-                                              fphdr-useragent-device-os
-                                              fphdr-useragent-device-os-version)
-                      (mock/body (json/write-str vehicle))
-                      (mock/content-type (rucore/content-type rumeta/mt-type
-                                                              (meta/mt-subtype-vehicle fpmt-subtype-prefix)
-                                                              meta/v001
-                                                              "json"
-                                                              "UTF-8"))
-                      (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
-                                                                                         fp-auth-scheme-param-name
-                                                                                         auth-token)))
-              resp (app req)]
-            (testing "status code" (is (= 200 (:status resp))))
-            (let [loaded-vehicles (fpcore/vehicles-for-user @conn loaded-user-entid)]
-              (is (= 1 (count loaded-vehicles)))
-              (let [[[_ loaded-veh-300z]] loaded-vehicles]
-                (is (= "Fairlady Z" (:fpvehicle/name loaded-veh-300z)))
-                (is (= 21.2 (:fpvehicle/fuel-capacity loaded-veh-300z)))
-                (is (= 94 (:fpvehicle/min-reqd-octane loaded-veh-300z)))))))))))
+          (testing "body of created vehicle"
+            (let [hdrs (:headers resp)
+              resp-body-stream (:body resp)
+              veh-location-str (get hdrs "location")]
+              (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
+              (is (not (nil? resp-body-stream)))
+              (is (not (nil? veh-location-str)))
+              (let [resp-veh-entid-str (rtucore/last-url-part veh-location-str)
+                    pct (rucore/parse-media-type (get hdrs "Content-Type"))
+                    charset (get rumeta/char-sets (:charset pct))
+                    resp-veh (rucore/read-res pct resp-body-stream charset)
+                    veh-last-modified-str (get resp-veh "last-modified")]
+                (is (not (nil? resp-veh-entid-str)))
+                (is (not (nil? resp-veh)))
+                (is (not (nil? veh-last-modified-str)))
+                (is (= "300Z" (get resp-veh "fpvehicle/name")))
+                (let [veh-create-last-modified (Long. veh-last-modified-str)
+                      loaded-vehicles (fpcore/vehicles-for-user @conn loaded-user-entid)]
+                  (is (= 1 (count loaded-vehicles)))
+                  (let [[[_ loaded-veh-300z]] loaded-vehicles]
+                    (is (= "300Z" (:fpvehicle/name loaded-veh-300z)))
+                    (is (= 19.0 (:fpvehicle/fuel-capacity loaded-veh-300z)))
+                    (is (= 93 (:fpvehicle/min-reqd-octane loaded-veh-300z))))
+                  ;; Update 1st vehicle
+                  (let [vehicle {"fpvehicle/name" "Fairlady Z"
+                                 "fpvehicle/fuel-capacity" 21.2
+                                 "fpvehicle/min-reqd-octane" 94}
+                        req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                        (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                        meta/v001
+                                                        "UTF-8;q=1,ISO-8859-1;q=0"
+                                                        "json"
+                                                        "en-US"
+                                                        :put
+                                                        veh-location-str
+                                                        fphdr-apptxn-id
+                                                        fphdr-useragent-device-make
+                                                        fphdr-useragent-device-os
+                                                        fphdr-useragent-device-os-version)
+                                (mock/body (json/write-str vehicle))
+                                (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                        (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                                        meta/v001
+                                                                        "json"
+                                                                        "UTF-8"))
+                                (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                                   fp-auth-scheme-param-name
+                                                                                                   auth-token)))
+                        resp (app req)]
+                    (testing "status code" (is (= 200 (:status resp))))
+                    (testing "body of created vehicle"
+                      (let [hdrs (:headers resp)
+                            resp-body-stream (:body resp)]
+                        (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
+                        (is (not (nil? resp-body-stream)))
+                        (let [pct (rucore/parse-media-type (get hdrs "Content-Type"))
+                              charset (get rumeta/char-sets (:charset pct))
+                              resp-veh (rucore/read-res pct resp-body-stream charset)
+                              veh-last-modified-str (get resp-veh "last-modified")]
+                          (is (not (nil? resp-veh-entid-str)))
+                          (is (not (nil? resp-veh)))
+                          (is (not (nil? veh-last-modified-str)))
+                          (is (= "Fairlady Z" (get resp-veh "fpvehicle/name")))
+                          (let [veh-update-last-modified (Long. veh-last-modified-str)]
+                            (is (> veh-update-last-modified veh-create-last-modified))))))
+                    (let [loaded-vehicles (fpcore/vehicles-for-user @conn loaded-user-entid)]
+                      (is (= 1 (count loaded-vehicles)))
+                      (let [[[_ loaded-veh-300z]] loaded-vehicles]
+                        (is (= "Fairlady Z" (:fpvehicle/name loaded-veh-300z)))
+                        (is (= 21.2 (:fpvehicle/fuel-capacity loaded-veh-300z)))
+                        (is (= 94 (:fpvehicle/min-reqd-octane loaded-veh-300z)))))))))))))))

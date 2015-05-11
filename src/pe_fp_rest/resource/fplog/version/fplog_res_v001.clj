@@ -13,19 +13,27 @@
 ;; 0.0.1 Validator function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-fplog-validator-fn meta/v001
-  [version body-data]
-  (fpval/save-fuelpurchaselog-validation-mask body-data))
+  [version fplog]
+  (fpval/save-fuelpurchaselog-validation-mask fplog))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 body-data transformation functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
-  [version body-data]
-  (fplogresutils/fplog-data-in-transform body-data))
+  [version
+   conn
+   fplog-entid
+   fplog
+   apptxnlogger]
+  (fplogresutils/fplog-data-in-transform fplog))
 
 (defmethod body-data-out-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   fplog-entid
+   fplog
+   apptxnlogger]
+  (identity fplog))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save fplog function

@@ -13,19 +13,27 @@
 ;; 0.0.1 Validator function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-envlog-validator-fn meta/v001
-  [version body-data]
-  (fpval/save-environmentlog-validation-mask body-data))
+  [version envlog]
+  (fpval/save-environmentlog-validation-mask envlog))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 body-data transformation functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
-  [version body-data]
-  (envlogresutils/envlog-data-in-transform body-data))
+  [version
+   conn
+   envlog-entid
+   envlog
+   apptxnlogger]
+  (envlogresutils/envlog-data-in-transform envlog))
 
 (defmethod body-data-out-transform-fn meta/v001
-  [version body-data]
-  (identity body-data))
+  [version
+   conn
+   envlog-entid
+   envlog
+   apptxnlogger]
+  (identity envlog))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save envlog function
