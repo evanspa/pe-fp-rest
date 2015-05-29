@@ -6,6 +6,7 @@
             [pe-fp-rest.resource.fuelstation.fuelstations-res :refer [new-fuelstation-validator-fn
                                                                       body-data-in-transform-fn
                                                                       body-data-out-transform-fn
+                                                                      next-fuelstation-id-fn
                                                                       save-new-fuelstation-fn]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -20,23 +21,39 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   conn
-   _   ;for 'fuelstations' resource, the 'in' would only ever be a NEW (to-be-created) fuel station, so it by definition wouldn't have an entid
-   fuelstation
-   apptxnlogger]
-  (identity fuelstation))
+   db-spec
+   _   ;for 'fuelstations' resource, the 'in' would only ever be a NEW (to-be-created) fuel station, so it by definition wouldn't have an id
+   fuelstation]
+  (-> fuelstation
+      (assoc :fpfuelstation/created-at
+             (c/from-long (Long. (:fpfuelstation/created-at fuelstation))))))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
-   conn
-   fuelstation-entid
-   fuelstation
-   apptxnlogger]
-  (identity fuelstation))
+   db-spec
+   fuelstation-id
+   fuelstation]
+  (-> fuelstation
+      (ucore/transform-map-val :fpfuelstation/created-at #(c/to-long %))
+      (ucore/transform-map-val :fpfuelstation/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 0.0.1 Save new fuel station function
+;; 0.0.1 Next fuelstation id function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod next-fuelstation-id-fn meta/v001
+  [version db-spec]
+  (fpcore/next-fuelstation-id db-spec))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 0.0.1 Save new fuelstation function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-new-fuelstation-fn meta/v001
-  [version conn partition user-entid fuelstation]
-  (fpcore/save-new-fuelstation-txnmap partition user-entid fuelstation))
+  [version
+   db-spec
+   user-id
+   new-fuelstation-id
+   fuelstation]
+  (fpcore/save-new-fuelstation db-spec
+                               user-id
+                               new-fuelstation-id
+                               fuelstation))

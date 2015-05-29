@@ -6,69 +6,47 @@
             [pe-rest-utils.core :as rucore]
             [pe-rest-utils.meta :as rumeta]
             [pe-user-rest.utils :as userresutils]
-            [pe-fp-core.validation :as fpval]
-            [pe-fp-rest.resource.fuelstation.apptxn :as fsapptxn]
-            [pe-apptxn-restsupport.resource-support :as atressup]))
+            [pe-fp-core.validation :as fpval]))
 
 (declare process-fuelstations-post!)
 (declare new-fuelstation-validator-fn)
 (declare body-data-in-transform-fn)
 (declare body-data-out-transform-fn)
 (declare save-new-fuelstation-fn)
-(declare extract-name-fn)
-(declare get-fuelstations-by-name-fn)
+(declare next-fuelstation-id-fn)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handler
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn handle-fuelstations-post!
   [ctx
-   conn
-   partition
-   apptxn-partition
-   hdr-apptxn-id
-   hdr-useragent-device-make
-   hdr-useragent-device-os
-   hdr-useragent-device-os-version
+   db-spec
    base-url
    entity-uri-prefix
    fuelstations-uri
-   user-entid
+   user-id
    embedded-resources-fn
    links-fn]
   (rucore/put-or-post-invoker ctx
                               :post-as-create
-                              conn
-                              partition
-                              apptxn-partition
-                              hdr-apptxn-id
-                              hdr-useragent-device-make
-                              hdr-useragent-device-os
-                              hdr-useragent-device-os-version
+                              db-spec
                               base-url
                               entity-uri-prefix
                               fuelstations-uri
                               embedded-resources-fn
                               links-fn
-                              [user-entid]
+                              [user-id]
                               new-fuelstation-validator-fn
                               fpval/savefuelstation-any-issues
                               body-data-in-transform-fn
                               body-data-out-transform-fn
                               nil
-                              nil
+                              next-fuelstation-id-fn
                               save-new-fuelstation-fn
                               nil
                               nil
                               nil
-                              nil
-                              fsapptxn/fpapptxn-fuelstation-create
-                              fsapptxn/fpapptxnlog-syncfuelstation-remote-proc-started
-                              fsapptxn/fpapptxnlog-syncfuelstation-remote-proc-done-success
-                              fsapptxn/fpapptxnlog-syncfuelstation-remote-proc-done-err-occurred
-                              :fpfuelstation/name
-                              atressup/apptxn-async-logger
-                              atressup/make-apptxn))
+                              nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Validator function
@@ -82,6 +60,11 @@
 (defmulti-by-version body-data-out-transform-fn meta/v001)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Next fuelstation id function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmulti-by-version next-fuelstation-id-fn meta/v001)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Save new fuelstation function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmulti-by-version save-new-fuelstation-fn meta/v001)
@@ -90,9 +73,7 @@
 ;; Resource definition
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defresource fuelstations-res
-  [conn
-   partition
-   apptxn-partition
+  [db-spec
    mt-subtype-prefix
    hdr-auth-token
    hdr-error-mask
@@ -100,11 +81,7 @@
    auth-scheme-param-name
    base-url
    entity-uri-prefix
-   hdr-apptxn-id
-   hdr-useragent-device-make
-   hdr-useragent-device-os
-   hdr-useragent-device-os-version
-   user-entid
+   user-id
    embedded-resources-fn
    links-fn]
   :available-media-types (rucore/enumerate-media-types (meta/supported-media-types mt-subtype-prefix))
@@ -112,23 +89,17 @@
   :available-languages rumeta/supported-languages
   :allowed-methods [:post]
   :authorized? (fn [ctx] (userresutils/authorized? ctx
-                                                   conn
-                                                   user-entid
+                                                   db-spec
+                                                   user-id
                                                    auth-scheme
                                                    auth-scheme-param-name))
   :known-content-type? (rucore/known-content-type-predicate (meta/supported-media-types mt-subtype-prefix))
   :post! (fn [ctx] (handle-fuelstations-post! ctx
-                                              conn
-                                              partition
-                                              apptxn-partition
-                                              hdr-apptxn-id
-                                              hdr-useragent-device-make
-                                              hdr-useragent-device-os
-                                              hdr-useragent-device-os-version
+                                              db-spec
                                               base-url
                                               entity-uri-prefix
                                               (:uri (:request ctx))
-                                              user-entid
+                                              user-id
                                               embedded-resources-fn
                                               links-fn))
   :handle-created (fn [ctx] (rucore/handle-resp ctx

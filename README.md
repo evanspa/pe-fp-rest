@@ -22,7 +22,12 @@ pe-fp-rest exposes the functionality of
 
 ## About the Fuel Purchase System
 
-The fuel purchase system provides the ability to record and analyze your vehicle's fuel usage.  It currently consists of an iOS (iPhone) application, as well as a server-side REST application (*which the iOS app communicates with*).  In its present form, the fuel purchase system is not terribly useful.  It enables you to collect fuel usage statistics with respect to your vehicles, but none of the analysis / reporting functionality is built out yet.
+The fuel purchase system provides the ability to record and analyze your
+vehicle's fuel usage.  It currently consists of an iOS (iPhone) application, as
+well as a server-side REST application (*which the iOS app communicates with*).
+In its present form, the fuel purchase system is not terribly useful.  It
+enables you to collect fuel usage statistics with respect to your vehicles, but
+none of the analysis / reporting functionality is built out yet.
 
 ### Client Applications
 
@@ -44,7 +49,7 @@ pe-fp-rest is available from Clojars.  Add the following dependency to your
 `project.clj` file:
 
 ```
-[pe-fp-rest "0.0.3"]
+[pe-fp-rest "0.0.4"]
 ```
 
 ## pe-* Clojure Library Suite
@@ -52,7 +57,9 @@ The pe-* Clojure library suite is a set of Clojure libraries to aid in the
 development of Clojure based applications.
 *(Each library is available on Clojars.)*
 + **[pe-core-utils](https://github.com/evanspa/pe-core-utils)**: provides a set
-  of various collection-related, date-related and other helpers functions.
+of various collection-related, date-related and other helpers functions.
++ **[pe-jdbc-utils](https://github.com/evanspa/pe-jdbc-utils)**: provides
+  a set of helper functions for working with JDBC.
 + **[pe-datomic-utils](https://github.com/evanspa/pe-datomic-utils)**: provides
   a set of helper functions for working with [Datomic](https://www.datomic.com).
 + **[pe-datomic-testutils](https://github.com/evanspa/pe-datomic-testutils)**: provides
@@ -68,12 +75,12 @@ code that depends on the functionality of the pe-user-* libraries
   PEAppTransaction Logging Framework.
 + **[pe-rest-utils](https://github.com/evanspa/pe-rest-utils)**: provides a set
   of functions for building easy-to-version hypermedia REST services (built on
-  top of [Liberator](http://clojure-liberator.github.io/liberator/).
+  top of [Liberator](http://clojure-liberator.github.io/liberator/)).
 + **[pe-rest-testutils](https://github.com/evanspa/pe-rest-testutils)**: provides
   a set of helper functions for unit testing web services.
 + **[pe-user-rest](https://github.com/evanspa/pe-user-rest)**: provides a set of
   functions encapsulating an abstraction modeling a user within a REST API
-  and leveraging [Datomic](http://www.datomic.com).
+  and leveraging PostgreSQL.
 + **[pe-apptxn-restsupport](https://github.com/evanspa/pe-apptxn-restsupport)**:
   provides a set of functions implementing the server-side REST layer of the
   PEAppTransaction Logging Framework.

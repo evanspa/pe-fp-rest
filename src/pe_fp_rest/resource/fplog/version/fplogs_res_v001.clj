@@ -22,23 +22,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   conn
-   _   ;for 'fplogs' resource, the 'in' would only ever be a NEW (to-be-created) fplog, so it by definition wouldn't have an entid
-   fplog
-   apptxnlogger]
-  (fplogresutils/fplog-data-in-transform fplog))
+   db-spec
+   _   ;for 'fplogs' resource, the 'in' would only ever be a NEW (to-be-created) fplog, so it by definition wouldn't have an id
+   fplog]
+  (-> fplog
+      (fplogresutils/fplog-data-in-transform)
+      (assoc :fplog/created-at (c/from-long (Long. (:fplog/created-at fplog))))))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
-   conn
-   fplog-entid
+   db-spec
+   fplog-id
    fplog
    apptxnlogger]
-  (identity fplog))
+  (-> fplog
+      (ucore/transform-map-val :fplog/created-at #(c/to-long %))
+      (ucore/transform-map-val :fplog/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save new fplog function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-new-fplog-fn meta/v001
-  [version conn partition user-entid fplog]
-  (fpcore/save-new-fplog-txnmap partition user-entid fplog))
+  [version
+   db-spec
+   user-id
+   new-fplog-id
+   fplog]
+  (fpcore/save-new-fplog db-spec
+                         user-id
+                         (:fplog/vehicle-id fplog)
+                         (:fplog/fuelstation-id fplog)
+                         new-fplog-id
+                         fplog))

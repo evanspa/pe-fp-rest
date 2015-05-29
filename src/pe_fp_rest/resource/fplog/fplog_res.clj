@@ -7,9 +7,7 @@
             [pe-rest-utils.meta :as rumeta]
             [pe-user-rest.utils :as userresutils]
             [pe-fp-core.core :as fpcore]
-            [pe-fp-core.validation :as fpval]
-            [pe-fp-rest.resource.fplog.apptxn :as fplogapptxn]
-            [pe-apptxn-restsupport.resource-support :as atressup]))
+            [pe-fp-core.validation :as fpval]))
 
 (declare process-fplogs-put!)
 (declare save-fplog-validator-fn)
@@ -22,37 +20,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn handle-fplog-put!
   [ctx
-   conn
-   partition
-   apptxn-partition
-   hdr-apptxn-id
-   hdr-useragent-device-make
-   hdr-useragent-device-os
-   hdr-useragent-device-os-version
+   db-spec
    base-url
    entity-uri-prefix
    fplog-uri
-   user-entid
-   fplog-entid
+   user-id
+   fplog-id
    embedded-resources-fn
    links-fn]
   (rucore/put-or-post-invoker ctx
                               :put
-                              conn
-                              partition
-                              apptxn-partition
-                              hdr-apptxn-id
-                              hdr-useragent-device-make
-                              hdr-useragent-device-os
-                              hdr-useragent-device-os-version
+                              db-spec
                               base-url
                               entity-uri-prefix
                               fplog-uri
                               embedded-resources-fn
                               links-fn
-                              [user-entid fplog-entid]
+                              [user-id fplog-id]
                               save-fplog-validator-fn
-                              fpval/savefuelpurchaselog-any-issues
+                              fpval/sfplog-any-issues
                               body-data-in-transform-fn
                               body-data-out-transform-fn
                               nil
@@ -61,14 +47,7 @@
                               save-fplog-fn
                               nil
                               nil
-                              nil
-                              fplogapptxn/fpapptxn-fplog-edit
-                              fplogapptxn/fpapptxnlog-syncfplog-remote-proc-started
-                              fplogapptxn/fpapptxnlog-syncfplog-remote-proc-done-success
-                              fplogapptxn/fpapptxnlog-syncfplog-remote-proc-done-err-occurred
-                              :fpfuelpurchaselog/purchase-date
-                              atressup/apptxn-async-logger
-                              atressup/make-apptxn))
+                              nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Validator function
@@ -90,9 +69,7 @@
 ;; Resource definition
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defresource fplog-res
-  [conn
-   partition
-   apptxn-partition
+  [db-spec
    mt-subtype-prefix
    hdr-auth-token
    hdr-error-mask
@@ -100,12 +77,8 @@
    auth-scheme-param-name
    base-url
    entity-uri-prefix
-   hdr-apptxn-id
-   hdr-useragent-device-make
-   hdr-useragent-device-os
-   hdr-useragent-device-os-version
-   user-entid
-   fplog-entid
+   user-id
+   fplog-id
    embedded-resources-fn
    links-fn]
   :available-media-types (rucore/enumerate-media-types (meta/supported-media-types mt-subtype-prefix))
@@ -113,31 +86,25 @@
   :available-languages rumeta/supported-languages
   :allowed-methods [:put]
   :authorized? (fn [ctx] (userresutils/authorized? ctx
-                                                   conn
-                                                   user-entid
+                                                   db-spec
+                                                   user-id
                                                    auth-scheme
                                                    auth-scheme-param-name))
   :known-content-type? (rucore/known-content-type-predicate (meta/supported-media-types mt-subtype-prefix))
-  :exists? (fn [ctx] (not (nil? (fpcore/fplog-for-user-by-id conn
-                                                             user-entid
-                                                             fplog-entid))))
+  :exists? (fn [ctx] (not (nil? (fpcore/fplog-for-user-by-id db-spec
+                                                             user-id
+                                                             fplog-id))))
   :can-put-to-missing? false
   :new? false
   :respond-with-entity? true
   :multiple-representations? false
   :put! (fn [ctx] (handle-fplog-put! ctx
-                                     conn
-                                     partition
-                                     apptxn-partition
-                                     hdr-apptxn-id
-                                     hdr-useragent-device-make
-                                     hdr-useragent-device-os
-                                     hdr-useragent-device-os-version
+                                     db-spec
                                      base-url
                                      entity-uri-prefix
                                      (:uri (:request ctx))
-                                     user-entid
-                                     fplog-entid
+                                     user-id
+                                     fplog-id
                                      embedded-resources-fn
                                      links-fn))
   :handle-ok (fn [ctx] (rucore/handle-resp ctx

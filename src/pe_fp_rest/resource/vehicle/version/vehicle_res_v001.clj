@@ -20,28 +20,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   conn
-   vehicle-entid
-   vehicle
-   apptxnlogger]
-  (identity vehicle))
+   db-spec
+   vehicle-id
+   vehicle]
+  (-> vehicle
+      (assoc :fpvehicle/created-at (c/from-long (Long. (:fpvehicle/created-at vehicle))))))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
-   conn
-   vehicle-entid
-   vehicle
-   apptxnlogger]
-  (identity vehicle))
+   db-spec
+   vehicle-id
+   vehicle]
+  (-> vehicle
+      (ucore/transform-map-val :fpvehicle/created-at #(c/to-long %))
+      (ucore/transform-map-val :fpvehicle/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save vehicle function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-vehicle-fn meta/v001
   [version
-   conn
-   partition
-   user-entid
-   vehicle-entid
+   db-spec
+   user-id
+   vehicle-id
    vehicle]
-  (fpcore/save-vehicle-txnmap user-entid vehicle-entid vehicle))
+  (fpcore/save-vehicle db-spec
+                       vehicle-id
+                       (assoc vehicle :fpvehicle/user-id user-id)))

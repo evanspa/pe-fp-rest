@@ -21,23 +21,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   conn
+   db-spec
    fplog-entid
-   fplog
-   apptxnlogger]
-  (fplogresutils/fplog-data-in-transform fplog))
+   fplog]
+  (-> fplog
+      (fplogresutils/fplog-data-in-transform)
+      (assoc :fplog/created-at (c/from-long (Long. (:fplog/created-at fplog))))))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
-   conn
+   db-spec
    fplog-entid
-   fplog
-   apptxnlogger]
-  (identity fplog))
+   fplog]
+  (-> fplog
+      (ucore/transform-map-val :fplog/created-at #(c/to-long %))
+      (ucore/transform-map-val :fplog/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save fplog function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-fplog-fn meta/v001
-  [version conn partition user-entid fplog-entid fplog]
-  (fpcore/save-fplog-txnmap user-entid fplog-entid fplog))
+  [version
+   db-spec
+   user-id
+   fplog-id
+   fplog]
+  (fpcore/save-fplog db-spec
+                       fplog-id
+                       (assoc fplog :fplog/user-id user-id)))

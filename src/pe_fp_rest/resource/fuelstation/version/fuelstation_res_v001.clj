@@ -20,28 +20,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   conn
-   fuelstation-entid
-   fuelstation
-   apptxnlogger]
-  (identity fuelstation))
+   db-spec
+   fuelstation-id
+   fuelstation]
+  (-> fuelstation
+      (assoc :fpfuelstation/created-at
+             (c/from-long (Long. (:fpfuelstation/created-at fuelstation))))))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
-   conn
-   fuelstation-entid
-   fuelstation
-   apptxnlogger]
-  (identity fuelstation))
+   db-spec
+   fuelstation-id
+   fuelstation]
+  (-> fuelstation
+      (ucore/transform-map-val :fpfuelstation/created-at #(c/to-long %))
+      (ucore/transform-map-val :fpfuelstation/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save fuel station function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-fuelstation-fn meta/v001
   [version
-   conn
-   partition
-   user-entid
-   fuelstation-entid
+   db-spec
+   user-id
+   fuelstation-id
    fuelstation]
-  (fpcore/save-fuelstation-txnmap user-entid fuelstation-entid fuelstation))
+  (fpcore/save-fuelstation db-spec
+                           fuelstation-id
+                           (assoc fuelstation :fpfuelstation/user-id user-id)))
