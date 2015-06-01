@@ -91,9 +91,7 @@
                                                    auth-scheme
                                                    auth-scheme-param-name))
   :known-content-type? (rucore/known-content-type-predicate (meta/supported-media-types mt-subtype-prefix))
-  :exists? (fn [ctx] (not (nil? (fpcore/fplog-for-user-by-id db-spec
-                                                             user-id
-                                                             fplog-id))))
+  :exists? (fn [ctx] (not (nil? (fpcore/fplog-by-id db-spec fplog-id))))
   :can-put-to-missing? false
   :new? false
   :respond-with-entity? true

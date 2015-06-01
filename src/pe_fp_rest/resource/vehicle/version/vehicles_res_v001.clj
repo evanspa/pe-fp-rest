@@ -1,6 +1,9 @@
 (ns pe-fp-rest.resource.vehicle.version.vehicles-res-v001
   (:require [pe-fp-rest.meta :as meta]
             [clojure.tools.logging :as log]
+            [clj-time.core :as t]
+            [clj-time.coerce :as c]
+            [pe-core-utils.core :as ucore]
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]
             [pe-fp-rest.resource.vehicle.vehicles-res :refer [new-vehicle-validator-fn

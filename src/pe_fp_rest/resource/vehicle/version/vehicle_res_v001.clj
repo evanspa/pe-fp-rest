@@ -1,6 +1,9 @@
 (ns pe-fp-rest.resource.vehicle.version.vehicle-res-v001
   (:require [pe-fp-rest.meta :as meta]
             [clojure.tools.logging :as log]
+            [clj-time.core :as t]
+            [clj-time.coerce :as c]
+            [pe-core-utils.core :as ucore]
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]
             [pe-fp-rest.resource.vehicle.vehicle-res :refer [save-vehicle-validator-fn
@@ -24,7 +27,7 @@
    vehicle-id
    vehicle]
   (-> vehicle
-      (assoc :fpvehicle/created-at (c/from-long (Long. (:fpvehicle/created-at vehicle))))))
+      (assoc :fpvehicle/updated-at (c/from-long (Long. (:fpvehicle/updated-at vehicle))))))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version

@@ -6,6 +6,5 @@
             [clojure.stacktrace :refer (e)]
             [clj-time.core :as t]
             [clojure.test :as test]
-            [datomic.api :as d]
             [clojure.java.io :refer [resource]]
             [clojure.tools.namespace.repl :refer (refresh refresh-all)]))

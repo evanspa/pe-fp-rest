@@ -1,6 +1,9 @@
 (ns pe-fp-rest.resource.fuelstation.version.fuelstation-res-v001
   (:require [pe-fp-rest.meta :as meta]
             [clojure.tools.logging :as log]
+            [clj-time.core :as t]
+            [clj-time.coerce :as c]
+            [pe-core-utils.core :as ucore]
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]
             [pe-fp-rest.resource.fuelstation.fuelstation-res :refer [save-fuelstation-validator-fn
@@ -24,8 +27,7 @@
    fuelstation-id
    fuelstation]
   (-> fuelstation
-      (assoc :fpfuelstation/created-at
-             (c/from-long (Long. (:fpfuelstation/created-at fuelstation))))))
+      (assoc :fpfuelstation/updated-at (c/from-long (Long. (:fpfuelstation/updated-at fuelstation))))))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version

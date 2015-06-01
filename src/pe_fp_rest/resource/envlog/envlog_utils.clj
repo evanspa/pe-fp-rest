@@ -3,11 +3,11 @@
             [pe-core-utils.core :as ucore]))
 
 (defn envlog-data-in-transform
-  [{vehicle-link :fpenvironmentlog/vehicle :as body-data}]
+  [{vehicle-link :envlog/vehicle :as body-data}]
   (-> body-data
-      (ucore/transform-map-val :fpenvironmentlog/reported-avg-mpg #(.doubleValue %))
-      (ucore/transform-map-val :fpenvironmentlog/reported-avg-mph #(.doubleValue %))
-      (ucore/transform-map-val :fpenvironmentlog/outside-temp #(.doubleValue %))
-      (ucore/transform-map-val :fpenvironmentlog/odometer #(.doubleValue %))
-      (assoc :fpenvironmentlog/vehicle
+      (ucore/transform-map-val :envlog/reported-avg-mpg #(.doubleValue %))
+      (ucore/transform-map-val :envlog/reported-avg-mph #(.doubleValue %))
+      (ucore/transform-map-val :envlog/outside-temp #(.doubleValue %))
+      (ucore/transform-map-val :envlog/odometer #(.doubleValue %))
+      (assoc :envlog/vehicle-id
              (Long/parseLong (.substring vehicle-link (inc (.lastIndexOf vehicle-link "/")))))))

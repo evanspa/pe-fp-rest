@@ -65,7 +65,7 @@ of various collection-related, date-related and other helpers functions.
 + **[pe-datomic-testutils](https://github.com/evanspa/pe-datomic-testutils)**: provides
   a set of helper functions to aid in unit testing Datomic-enabled functions.
 + **[pe-user-core](https://github.com/evanspa/pe-user-core)**: provides
-  a set of functions for modeling a generic user, leveraging Datomic as a
+  a set of functions for modeling a generic user, leveraging PostgreSQL as a
   backend store.
 + **[pe-user-testutils](https://github.com/evanspa/pe-user-testutils)**: a set of helper functions to aid in unit testing
 code that depends on the functionality of the pe-user-* libraries

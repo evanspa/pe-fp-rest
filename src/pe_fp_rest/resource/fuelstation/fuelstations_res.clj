@@ -37,7 +37,7 @@
                               links-fn
                               [user-id]
                               new-fuelstation-validator-fn
-                              fpval/savefuelstation-any-issues
+                              fpval/sfs-any-issues
                               body-data-in-transform-fn
                               body-data-out-transform-fn
                               nil

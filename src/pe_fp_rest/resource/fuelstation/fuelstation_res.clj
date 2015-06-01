@@ -91,9 +91,7 @@
                                                    auth-scheme
                                                    auth-scheme-param-name))
   :known-content-type? (rucore/known-content-type-predicate (meta/supported-media-types mt-subtype-prefix))
-  :exists? (fn [ctx] (not (nil? (fpcore/fuelstation-for-user-by-id db-spec
-                                                                   user-id
-                                                                   fuelstation-id))))
+  :exists? (fn [ctx] (not (nil? (fpcore/fuelstation-by-id db-spec fuelstation-id))))
   :can-put-to-missing? false
   :new? false
   :respond-with-entity? true
