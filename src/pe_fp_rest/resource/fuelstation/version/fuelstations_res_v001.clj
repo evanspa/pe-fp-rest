@@ -36,9 +36,10 @@
    db-spec
    fuelstation-id
    fuelstation]
-  (-> fuelstation
-      (ucore/transform-map-val :fpfuelstation/created-at #(c/to-long %))
-      (ucore/transform-map-val :fpfuelstation/updated-at #(c/to-long %))))
+  (let [created-at-long (c/to-long (:fpfuelstation/created-at fuelstation))]
+    (-> fuelstation
+        (assoc :fpfuelstation/created-at created-at-long)
+        (assoc :fpfuelstation/updated-at created-at-long))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Next fuelstation id function

@@ -37,9 +37,10 @@
    db-spec
    fplog-id
    fplog]
-  (-> fplog
-      (ucore/transform-map-val :fplog/created-at #(c/to-long %))
-      (ucore/transform-map-val :fplog/updated-at #(c/to-long %))))
+  (let [created-at-long (c/to-long (:fplog/created-at fplog))]
+    (-> fplog
+        (assoc :fplog/created-at created-at-long)
+        (assoc :fplog/updated-at created-at-long))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save new fplog function

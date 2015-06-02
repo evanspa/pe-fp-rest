@@ -37,9 +37,10 @@
    db-spec
    vehicle-id
    vehicle]
-  (-> vehicle
-      (ucore/transform-map-val :fpvehicle/created-at #(c/to-long %))
-      (ucore/transform-map-val :fpvehicle/updated-at #(c/to-long %))))
+  (let [created-at-long (c/to-long (:fpvehicle/created-at vehicle))]
+    (-> vehicle
+        (assoc :fpvehicle/created-at created-at-long)
+        (assoc :fpvehicle/updated-at created-at-long))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Name extraction functions

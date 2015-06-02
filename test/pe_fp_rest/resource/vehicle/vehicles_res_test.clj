@@ -181,6 +181,7 @@
                 (is (not (nil? resp-veh)))
                 (is (= "300Z" (get resp-veh "fpvehicle/name")))
                 (is (not (nil? (get resp-veh "fpvehicle/created-at"))))
+                (is (not (nil? (get resp-veh "fpvehicle/updated-at"))))
                 (is (= 93 (get resp-veh "fpvehicle/default-octane")))
                 (let [loaded-vehicles (fpcore/vehicles-for-user db-spec loaded-user-id)]
                   (is (= 1 (count loaded-vehicles)))

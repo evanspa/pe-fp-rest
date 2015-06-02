@@ -37,9 +37,10 @@
    db-spec
    envlog-id
    envlog]
-  (-> envlog
-      (ucore/transform-map-val :envlog/created-at #(c/to-long %))
-      (ucore/transform-map-val :envlog/updated-at #(c/to-long %))))
+  (let [created-at-long (c/to-long (:envlog/created-at envlog))]
+    (-> envlog
+        (assoc :envlog/created-at created-at-long)
+        (assoc :envlog/updated-at created-at-long))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save new envlog function

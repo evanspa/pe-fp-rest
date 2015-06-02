@@ -184,6 +184,8 @@
                     resp-fs (rucore/read-res pct resp-body-stream charset)]
                 (is (not (nil? resp-fs-id-str)))
                 (is (not (nil? resp-fs)))
+                (is (not (nil? (get resp-fs "fpfuelstation/created-at"))))
+                (is (not (nil? (get resp-fs "fpfuelstation/updated-at"))))
                 (is (= "Joe's" (get resp-fs "fpfuelstation/name")))
                 (is (= "101 Main Street" (get resp-fs "fpfuelstation/street")))
                 (is (= "Charlotte" (get resp-fs "fpfuelstation/city")))

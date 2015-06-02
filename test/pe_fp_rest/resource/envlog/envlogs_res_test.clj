@@ -239,6 +239,8 @@
                       (is (not (nil? resp-envlog)))
                       (is (= veh-location-str resp-envlog-veh-link))
                       (is (= logged-at (c/from-long (Long. (get resp-envlog "envlog/logged-at")))))
+                      (is (not (nil? (get resp-envlog "envlog/created-at"))))
+                      (is (not (nil? (get resp-envlog "envlog/updated-at"))))
                       (is (= 24 (get resp-envlog "envlog/reported-avg-mpg")))
                       (is (= 22.1 (get resp-envlog "envlog/reported-avg-mph")))
                       (is (= 25001.2 (get resp-envlog "envlog/odometer")))

@@ -368,6 +368,8 @@
                                         (is (not (nil? resp-fplog)))
                                         (is (= veh-300zx-location-str resp-fplog-veh-link))
                                         (is (= fs-joes-location-str resp-fplog-fs-link))
+                                        (is (not (nil? (get resp-fplog "fplog/created-at"))))
+                                        (is (not (nil? (get resp-fplog "fplog/updated-at"))))
                                         (is (= purchased-at (c/from-long (Long. (get resp-fplog "fplog/purchased-at")))))
                                         (is (= true (get resp-fplog "fplog/got-car-wash")))
                                         (is (= 0.08 (get resp-fplog "fplog/car-wash-per-gal-discount")))

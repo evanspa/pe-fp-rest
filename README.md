@@ -49,7 +49,7 @@ pe-fp-rest is available from Clojars.  Add the following dependency to your
 `project.clj` file:
 
 ```
-[pe-fp-rest "0.0.5"]
+[pe-fp-rest "0.0.6"]
 ```
 
 ## pe-* Clojure Library Suite
