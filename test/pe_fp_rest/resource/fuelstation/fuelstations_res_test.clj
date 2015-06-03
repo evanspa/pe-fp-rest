@@ -104,7 +104,6 @@
     (is (nil? (usercore/load-user-by-email db-spec "smithka@testing.com")))
     (is (nil? (usercore/load-user-by-username db-spec "smithk")))
     (let [user {"user/name" "Karen Smith"
-                "user/created-at" (c/to-long (t/now))
                 "user/email" "smithka@testing.com"
                 "user/username" "smithk"
                 "user/password" "insecure"}
@@ -138,7 +137,6 @@
         ;; Create 1st fuelstation
         (is (empty? (fpcore/fuelstations-for-user db-spec loaded-user-id)))
         (let [fuelstation {"fpfuelstation/name" "Joe's"
-                           "fpfuelstation/created-at" (c/to-long (t/now))
                            "fpfuelstation/street" "101 Main Street"
                            "fpfuelstation/city" "Charlotte"
                            "fpfuelstation/state" "NC"
@@ -211,7 +209,6 @@
                                        "fpfuelstation/city" "Providence"
                                        "fpfuelstation/state" "NC"
                                        "fpfuelstation/zip" "28278"
-                                       "fpfuelstation/created-at" (c/to-long (t/now))
                                        "fpfuelstation/longitude" 82.29103
                                        "fpfuelstation/latitude" -14.7002}
                           req (-> (rtucore/req-w-std-hdrs rumeta/mt-type

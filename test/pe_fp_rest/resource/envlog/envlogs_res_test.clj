@@ -118,7 +118,6 @@
     (is (nil? (usercore/load-user-by-email db-spec "smithka@testing.com")))
     (is (nil? (usercore/load-user-by-username db-spec "smithk")))
     (let [user {"user/name" "Karen Smith"
-                "user/created-at" (c/to-long (t/now))
                 "user/email" "smithka@testing.com"
                 "user/username" "smithk"
                 "user/password" "insecure"}
@@ -152,7 +151,6 @@
         ;; Create 1st vehicle
         (is (empty? (fpcore/vehicles-for-user db-spec loaded-user-id)))
         (let [vehicle {"fpvehicle/name" "300Z"
-                       "fpvehicle/created-at" (c/to-long (t/now))
                        "fpvehicle/default-octane" 93}
               vehicles-uri (str base-url
                                 entity-uri-prefix
@@ -189,7 +187,6 @@
               (is (empty? (fpcore/envlogs-for-user db-spec loaded-user-id)))
               (let [logged-at (t/now)
                     envlog {"envlog/vehicle" veh-location-str
-                            "envlog/created-at" (c/to-long (t/now))
                             "envlog/logged-at" (c/to-long logged-at)
                             "envlog/reported-avg-mpg" 24
                             "envlog/reported-avg-mph" 22.1
@@ -241,7 +238,7 @@
                       (is (= logged-at (c/from-long (Long. (get resp-envlog "envlog/logged-at")))))
                       (is (not (nil? (get resp-envlog "envlog/created-at"))))
                       (is (not (nil? (get resp-envlog "envlog/updated-at"))))
-                      (is (= 24 (get resp-envlog "envlog/reported-avg-mpg")))
+                      (is (= 24.0 (get resp-envlog "envlog/reported-avg-mpg")))
                       (is (= 22.1 (get resp-envlog "envlog/reported-avg-mph")))
                       (is (= 25001.2 (get resp-envlog "envlog/odometer")))
                       (is (= 46.4 (get resp-envlog "envlog/reported-outside-temp")))

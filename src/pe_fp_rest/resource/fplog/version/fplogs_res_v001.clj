@@ -30,17 +30,17 @@
    fplog]
   (-> fplog
       (fplogresutils/fplog-data-in-transform)
-      (assoc :fplog/created-at (c/from-long (Long. (:fplog/created-at fplog))))))
+      (assoc :fplog/purchased-at (c/from-long (Long. (:fplog/purchased-at fplog))))))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
    fplog-id
    fplog]
-  (let [created-at-long (c/to-long (:fplog/created-at fplog))]
-    (-> fplog
-        (assoc :fplog/created-at created-at-long)
-        (assoc :fplog/updated-at created-at-long))))
+  (-> fplog
+      (ucore/transform-map-val :fplog/created-at #(c/to-long %))
+      (ucore/transform-map-val :fplog/updated-at #(c/to-long %))
+      (ucore/transform-map-val :fplog/purchased-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save new fplog function

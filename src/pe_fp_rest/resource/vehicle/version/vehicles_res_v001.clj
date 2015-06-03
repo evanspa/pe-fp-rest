@@ -29,18 +29,16 @@
    db-spec
    _   ;for 'vehicles' resource, the 'in' would only ever be a NEW (to-be-created) vehicle, so it by definition wouldn't have an id
    vehicle]
-  (-> vehicle
-      (assoc :fpvehicle/created-at (c/from-long (Long. (:fpvehicle/created-at vehicle))))))
+  (identity vehicle))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
    vehicle-id
    vehicle]
-  (let [created-at-long (c/to-long (:fpvehicle/created-at vehicle))]
-    (-> vehicle
-        (assoc :fpvehicle/created-at created-at-long)
-        (assoc :fpvehicle/updated-at created-at-long))))
+  (-> vehicle
+      (ucore/transform-map-val :fpvehicle/created-at #(c/to-long %))
+      (ucore/transform-map-val :fpvehicle/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Name extraction functions

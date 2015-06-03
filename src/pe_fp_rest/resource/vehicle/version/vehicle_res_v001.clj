@@ -26,8 +26,7 @@
    db-spec
    vehicle-id
    vehicle]
-  (-> vehicle
-      (assoc :fpvehicle/updated-at (c/from-long (Long. (:fpvehicle/updated-at vehicle))))))
+  (identity vehicle))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version

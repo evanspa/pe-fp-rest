@@ -120,7 +120,6 @@
     (let [user {"user/name" "Karen Smith"
                 "user/email" "smithka@testing.com"
                 "user/username" "smithk"
-                "user/created-at" (c/to-long (t/now))
                 "user/password" "insecure"}
           req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
                                           (usermeta/mt-subtype-user fpmt-subtype-prefix)
@@ -152,7 +151,6 @@
         ;; Create 1st vehicle
         (is (empty? (fpcore/vehicles-for-user db-spec loaded-user-id)))
         (let [vehicle {"fpvehicle/name" "300Z"
-                       "fpvehicle/created-at" (c/to-long (t/now))
                        "fpvehicle/default-octane" 93}
               vehicles-uri (str base-url
                                 entity-uri-prefix

@@ -26,8 +26,7 @@
    db-spec
    fuelstation-id
    fuelstation]
-  (-> fuelstation
-      (assoc :fpfuelstation/updated-at (c/from-long (Long. (:fpfuelstation/updated-at fuelstation))))))
+  (identity fuelstation))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version

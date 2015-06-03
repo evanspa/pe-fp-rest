@@ -27,19 +27,16 @@
    db-spec
    _   ;for 'fuelstations' resource, the 'in' would only ever be a NEW (to-be-created) fuel station, so it by definition wouldn't have an id
    fuelstation]
-  (-> fuelstation
-      (assoc :fpfuelstation/created-at
-             (c/from-long (Long. (:fpfuelstation/created-at fuelstation))))))
+  (identity fuelstation))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
    fuelstation-id
    fuelstation]
-  (let [created-at-long (c/to-long (:fpfuelstation/created-at fuelstation))]
-    (-> fuelstation
-        (assoc :fpfuelstation/created-at created-at-long)
-        (assoc :fpfuelstation/updated-at created-at-long))))
+  (-> fuelstation
+      (ucore/transform-map-val :fpfuelstation/created-at #(c/to-long %))
+      (ucore/transform-map-val :fpfuelstation/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Next fuelstation id function

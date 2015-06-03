@@ -136,7 +136,6 @@
     (is (nil? (usercore/load-user-by-email db-spec "smithka@testing.com")))
     (is (nil? (usercore/load-user-by-username db-spec "smithk")))
     (let [user {"user/name" "Karen Smith"
-                "user/created-at" (c/to-long (t/now))
                 "user/email" "smithka@testing.com"
                 "user/username" "smithk"
                 "user/password" "insecure"}
@@ -166,7 +165,6 @@
         ;; Create 1st vehicle
         (is (empty? (fpcore/vehicles-for-user db-spec loaded-user-id)))
         (let [vehicle {"fpvehicle/name" "300Z"
-                       "fpvehicle/created-at" (c/to-long (t/now))
                        "fpvehicle/default-octane" 93}
               vehicles-uri (str base-url
                                 entity-uri-prefix
@@ -199,7 +197,6 @@
               (is (= 1 (count loaded-vehicles)))
               ;; Create 2nd Vehicle
               (let [vehicle {"fpvehicle/name" "Mazda CX-9"
-                             "fpvehicle/created-at" (c/to-long (t/now))
                              "fpvehicle/default-octane" 87}
                     req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
                                                     (meta/mt-subtype-vehicle fpmt-subtype-prefix)
@@ -233,7 +230,6 @@
                     ;; Create 1st fuel station
                     (is (empty? (fpcore/fuelstations-for-user db-spec loaded-user-id)))
                     (let [fuelstation {"fpfuelstation/name" "Joe's"
-                                       "fpfuelstation/created-at" (c/to-long (t/now))
                                        "fpfuelstation/street" "101 Main Street"
                                        "fpfuelstation/city" "Charlotte"
                                        "fpfuelstation/state" "NC"
@@ -273,7 +269,6 @@
                         (let [[[loaded-fs-joes-id loaded-fs-joes]] loaded-fuelstations]
                           ;; Create 2nd fuelstation
                           (let [fuelstation {"fpfuelstation/name" "Ed's"
-                                             "fpfuelstation/created-at" (c/to-long (t/now))
                                              "fpfuelstation/street" "103 Main Street"
                                              "fpfuelstation/city" "Providence"
                                              "fpfuelstation/state" "NC"
@@ -315,7 +310,6 @@
                                 (let [purchased-at (t/now)
                                       fplog {"fplog/vehicle" veh-300zx-location-str
                                              "fplog/fuelstation" fs-joes-location-str
-                                             "fplog/created-at" (c/to-long (t/now))
                                              "fplog/purchased-at" (c/to-long purchased-at)
                                              "fplog/got-car-wash" true
                                              "fplog/car-wash-per-gal-discount" 0.08

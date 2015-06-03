@@ -138,7 +138,6 @@
     (is (nil? (usercore/load-user-by-username db-spec "smithk")))
     (let [user {"user/name" "Karen Smith"
                 "user/email" "smithka@testing.com"
-                "user/created-at" (c/to-long (t/now))
                 "user/username" "smithk"
                 "user/password" "insecure"}
           req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
@@ -171,7 +170,6 @@
         ;; Create 1st vehicle
         (is (empty? (fpcore/vehicles-for-user db-spec loaded-user-id)))
         (let [vehicle {"fpvehicle/name" "300Z"
-                       "fpvehicle/created-at" (c/to-long (t/now))
                        "fpvehicle/default-octane" 93}
               vehicles-uri (str base-url
                                 entity-uri-prefix
@@ -208,7 +206,6 @@
               (is (empty? (fpcore/envlogs-for-user db-spec loaded-user-id)))
               (let [logged-at (t/now)
                     envlog {"envlog/vehicle" veh-location-str
-                            "envlog/created-at" (c/to-long (t/now))
                             "envlog/logged-at" (c/to-long logged-at)
                             "envlog/reported-avg-mpg" 24
                             "envlog/reported-avg-mph" 22.1
@@ -263,9 +260,8 @@
                     (is (= 46.4M (:envlog/reported-outside-temp loaded-envlog)))
                     (is (= 168M (:envlog/dte loaded-envlog)))
                     (let [envlog {"envlog/vehicle" veh-location-str
-                                  "envlog/log-date" "Sat, 30 Oct 2014 11:25:57 GMT"
+                                  "envlog/logged-at" (c/to-long (t/now))
                                   "envlog/reported-avg-mpg" 23
-                                  "envlog/updated-at" (c/to-long (t/now))
                                   "envlog/reported-avg-mph" 21.1
                                   "envlog/odometer" 25000.2
                                   "envlog/reported-outside-temp" 45.4
@@ -295,6 +291,7 @@
                           (is (= (Long/parseLong resp-envlog-id-str) loaded-envlog-id))
                           (is (= resp-envlog-veh-id (:envlog/vehicle-id loaded-envlog)))
                           (is (= 23.0M (:envlog/reported-avg-mpg loaded-envlog)))
+                          (is (not (nil? (:envlog/logged-at loaded-envlog))))
                           (is (= 21.1M (:envlog/reported-avg-mph loaded-envlog)))
                           (is (= 25000.2M (:envlog/odometer loaded-envlog)))
                           (is (= 45.4M (:envlog/reported-outside-temp loaded-envlog)))

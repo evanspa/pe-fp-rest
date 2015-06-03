@@ -29,7 +29,7 @@
    envlog]
   (-> envlog
       (envlogresutils/envlog-data-in-transform)
-      (assoc :envlog/updated-at (c/from-long (Long. (:envlog/updated-at envlog))))))
+      (assoc :envlog/logged-at (c/from-long (Long. (:envlog/logged-at envlog))))))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
@@ -38,7 +38,8 @@
    envlog]
   (-> envlog
       (ucore/transform-map-val :envlog/created-at #(c/to-long %))
-      (ucore/transform-map-val :envlog/updated-at #(c/to-long %))))
+      (ucore/transform-map-val :envlog/updated-at #(c/to-long %))
+      (ucore/transform-map-val :envlog/logged-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save envlog function
