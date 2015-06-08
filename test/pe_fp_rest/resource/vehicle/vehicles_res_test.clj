@@ -137,7 +137,8 @@
         ;; Create 1st vehicle
         (is (empty? (fpcore/vehicles-for-user db-spec loaded-user-id)))
         (let [vehicle {"fpvehicle/name" "300Z"
-                       "fpvehicle/default-octane" 93}
+                       "fpvehicle/default-octane" 93
+                       "fpvehicle/fuel-capacity" 19.1}
               vehicles-uri (str base-url
                                 entity-uri-prefix
                                 usermeta/pathcomp-users
@@ -181,12 +182,14 @@
                 (is (not (nil? (get resp-veh "fpvehicle/created-at"))))
                 (is (not (nil? (get resp-veh "fpvehicle/updated-at"))))
                 (is (= 93 (get resp-veh "fpvehicle/default-octane")))
+                (is (= 19.1 (get resp-veh "fpvehicle/fuel-capacity")))
                 (let [loaded-vehicles (fpcore/vehicles-for-user db-spec loaded-user-id)]
                   (is (= 1 (count loaded-vehicles)))
                   (let [[[loaded-veh-300z-id loaded-veh-300z]] loaded-vehicles]
                     (is (= (Long/parseLong resp-veh-id-str) loaded-veh-300z-id))
                     (is (= "300Z" (:fpvehicle/name loaded-veh-300z)))
                     (is (= 93 (:fpvehicle/default-octane loaded-veh-300z)))
+                    (is (= 19.1M (:fpvehicle/fuel-capacity loaded-veh-300z)))
 
                     ;; Create 2nd vehicle
                     (let [vehicle {"fpvehicle/name" "Mazda CX-9"

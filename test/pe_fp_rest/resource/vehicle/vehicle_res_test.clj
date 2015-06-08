@@ -202,7 +202,8 @@
                   ;; Update 1st vehicle
                   (let [vehicle {"fpvehicle/name" "Fairlady Z"
                                  "fpvehicle/updated-at" (c/to-long (t/now))
-                                 "fpvehicle/default-octane" 94}
+                                 "fpvehicle/default-octane" 94
+                                 "fpvehicle/fuel-capacity" 18.4}
                         req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
                                                         (meta/mt-subtype-vehicle fpmt-subtype-prefix)
                                                         meta/v001
@@ -232,7 +233,8 @@
                               resp-veh (rucore/read-res pct resp-body-stream charset)]
                           (is (not (nil? resp-veh-id-str)))
                           (is (not (nil? resp-veh)))
-                          (is (= "Fairlady Z" (get resp-veh "fpvehicle/name"))))))
+                          (is (= "Fairlady Z" (get resp-veh "fpvehicle/name")))
+                          (is (= 18.4 (get resp-veh "fpvehicle/fuel-capacity"))))))
                     (let [loaded-vehicles (fpcore/vehicles-for-user db-spec loaded-user-id)]
                       (is (= 1 (count loaded-vehicles)))
                       (let [[[_ loaded-veh-300z]] loaded-vehicles]
