@@ -9,7 +9,6 @@
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]))
 
-(declare process-vehicles-put!)
 (declare save-vehicle-validator-fn)
 (declare body-data-in-transform-fn)
 (declare body-data-out-transform-fn)
