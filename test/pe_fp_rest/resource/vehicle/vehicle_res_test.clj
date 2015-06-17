@@ -19,6 +19,7 @@
             [pe-fp-core.ddl :as fpddl]
             [pe-jdbc-utils.core :as jcore]
             [pe-fp-core.core :as fpcore]
+            [pe-fp-core.validation :as fpval]
             [pe-rest-testutils.core :as rtucore]
             [pe-core-utils.core :as ucore]
             [pe-rest-utils.core :as rucore]
@@ -149,7 +150,39 @@
                                                                           (Long. resp-user-id-str)
                                                                           auth-token)]
         ;; Create 1st vehicle
-        (is (empty? (fpcore/vehicles-for-user db-spec loaded-user-id)))
+        (let [vehicle {"fpvehicle/name" "Jeep"
+                       "fpvehicle/default-octane" 87}
+              vehicles-uri (str base-url
+                                entity-uri-prefix
+                                usermeta/pathcomp-users
+                                "/"
+                                resp-user-id-str
+                                "/"
+                                meta/pathcomp-vehicles)
+              req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                              (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                              meta/v001
+                                              "UTF-8;q=1,ISO-8859-1;q=0"
+                                              "json"
+                                              "en-US"
+                                              :post
+                                              vehicles-uri)
+                      (mock/body (json/write-str vehicle))
+                      (mock/content-type (rucore/content-type rumeta/mt-type
+                                                              (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                              meta/v001
+                                                              "json"
+                                                              "UTF-8"))
+                      (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                         fp-auth-scheme-param-name
+                                                                                         auth-token)))
+              resp (app req)
+              hdrs (:headers resp)
+              veh-location-str (get hdrs "location")]
+          (testing "status code" (is (= 201 (:status resp)))))
+
+        ;; Create 2nd vehicle
+        (is (= 1 (count (fpcore/vehicles-for-user db-spec loaded-user-id))))
         (let [vehicle {"fpvehicle/name" "300Z"
                        "fpvehicle/default-octane" 93}
               vehicles-uri (str base-url
@@ -195,11 +228,11 @@
                 (is (not (nil? resp-veh)))
                 (is (= "300Z" (get resp-veh "fpvehicle/name")))
                 (let [loaded-vehicles (fpcore/vehicles-for-user db-spec loaded-user-id)]
-                  (is (= 1 (count loaded-vehicles)))
+                  (is (= 2 (count loaded-vehicles)))
                   (let [[[_ loaded-veh-300z]] loaded-vehicles]
                     (is (= "300Z" (:fpvehicle/name loaded-veh-300z)))
                     (is (= 93 (:fpvehicle/default-octane loaded-veh-300z))))
-                  ;; Update 1st vehicle
+                  ;; Update 2nd vehicle
                   (let [vehicle {"fpvehicle/name" "Fairlady Z"
                                  "fpvehicle/updated-at" (c/to-long (t/now))
                                  "fpvehicle/default-octane" 94
@@ -236,7 +269,41 @@
                           (is (= "Fairlady Z" (get resp-veh "fpvehicle/name")))
                           (is (= 18.4 (get resp-veh "fpvehicle/fuel-capacity"))))))
                     (let [loaded-vehicles (fpcore/vehicles-for-user db-spec loaded-user-id)]
-                      (is (= 1 (count loaded-vehicles)))
+                      (is (= 2 (count loaded-vehicles)))
                       (let [[[_ loaded-veh-300z]] loaded-vehicles]
                         (is (= "Fairlady Z" (:fpvehicle/name loaded-veh-300z)))
-                        (is (= 94 (:fpvehicle/default-octane loaded-veh-300z)))))))))))))))
+                        (is (= 94 (:fpvehicle/default-octane loaded-veh-300z))))))
+
+                  ;; Update the 2nd vehicle again, but giving it a non-unique name
+                  (let [vehicle {"fpvehicle/name" "Jeep"}
+                        req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                        (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                        meta/v001
+                                                        "UTF-8;q=1,ISO-8859-1;q=0"
+                                                        "json"
+                                                        "en-US"
+                                                        :put
+                                                        veh-location-str)
+                                (mock/body (json/write-str vehicle))
+                                (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                        (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                                        meta/v001
+                                                                        "json"
+                                                                        "UTF-8"))
+                                (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                                   fp-auth-scheme-param-name
+                                                                                                   auth-token)))
+                        resp (app req)]
+                    (testing "status code" (is (= 422 (:status resp))))
+                    (testing "headers and body of created user"
+                      (let [hdrs (:headers resp)
+                            user-location-str (get hdrs "location")]
+                        (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
+                        (is (nil? user-location-str))
+                        (let [error-mask-str (get hdrs fphdr-error-mask)]
+                          (is (nil? (get hdrs fphdr-auth-token)))
+                          (is (not (nil? error-mask-str)))
+                          (let [error-mask (Long/parseLong error-mask-str)]
+                            (is (pos? (bit-and error-mask fpval/sv-any-issues)))
+                            (is (pos? (bit-and error-mask fpval/sv-vehicle-already-exists)))
+                            (is (zero? (bit-and error-mask fpval/sv-name-not-provided)))))))))))))))))
