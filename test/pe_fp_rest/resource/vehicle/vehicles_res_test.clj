@@ -18,6 +18,7 @@
             [pe-fp-rest.meta :as meta]
             [pe-user-core.ddl :as uddl]
             [pe-fp-core.ddl :as fpddl]
+            [pe-fp-core.validation :as fpval]
             [pe-jdbc-utils.core :as jcore]
             [pe-fp-core.core :as fpcore]
             [pe-rest-testutils.core :as rtucore]
@@ -242,4 +243,43 @@
                                 (is (= (Long/parseLong resp-veh-id-str) loaded-veh-mazda-id))
                                 (is (= "Mazda CX-9" (:fpvehicle/name loaded-veh-mazda)))
                                 (is (not (nil? (get resp-veh "fpvehicle/created-at"))))
-                                (is (= 87 (:fpvehicle/default-octane loaded-veh-mazda)))))))))))))))))))
+                                (is (= 87 (:fpvehicle/default-octane loaded-veh-mazda)))))))))
+                    ;; Try to create a 3rd vehicle with a non-unique name
+                    (let [vehicle {"fpvehicle/name" "Mazda CX-9"}
+                          req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                          (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                          meta/v001
+                                                          "UTF-8;q=1,ISO-8859-1;q=0"
+                                                          "json"
+                                                          "en-US"
+                                                          :post
+                                                          (str base-url
+                                                               entity-uri-prefix
+                                                               usermeta/pathcomp-users
+                                                               "/"
+                                                               resp-user-id-str
+                                                               "/"
+                                                               meta/pathcomp-vehicles))
+                                  (mock/body (json/write-str vehicle))
+                                  (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                          (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                                          meta/v001
+                                                                          "json"
+                                                                          "UTF-8"))
+                                  (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                                     fp-auth-scheme-param-name
+                                                                                                     auth-token)))
+                          resp (app req)]
+                      (testing "status code" (is (= 403 (:status resp))))
+                      (testing "headers and body of created user"
+                        (let [hdrs (:headers resp)
+                              user-location-str (get hdrs "location")]
+                          (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
+                          (is (nil? user-location-str))
+                          (let [error-mask-str (get hdrs fphdr-error-mask)]
+                            (is (nil? (get hdrs fphdr-auth-token)))
+                            (is (not (nil? error-mask-str)))
+                            (let [error-mask (Long/parseLong error-mask-str)]
+                              (is (pos? (bit-and error-mask fpval/sv-any-issues)))
+                              (is (pos? (bit-and error-mask fpval/sv-vehicle-already-exists)))
+                              (is (zero? (bit-and error-mask fpval/sv-name-not-provided))))))))))))))))))

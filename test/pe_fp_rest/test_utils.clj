@@ -59,7 +59,9 @@
                       true
                       fpddl/v0-create-vehicle-ddl
                       fpddl/v0-add-unique-constraint-vehicle-name
-                      fpddl/v1-vehicle-add-fuel-capacity-col)
+                      fpddl/v1-vehicle-add-fuel-capacity-col
+                      fpddl/v2-vehicle-drop-erroneous-unique-name-constraint
+                      fpddl/v2-vehicle-add-proper-unique-name-constraint)
     (jcore/with-try-catch-exec-as-query db-spec
       (fpddl/v0-create-vehicle-updated-count-inc-trigger-function-fn db-spec))
     (jcore/with-try-catch-exec-as-query db-spec
