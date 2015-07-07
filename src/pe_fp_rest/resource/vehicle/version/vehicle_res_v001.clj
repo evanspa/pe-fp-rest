@@ -4,6 +4,7 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]
             [pe-core-utils.core :as ucore]
+            [pe-user-rest.utils :as userresutils]
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]
             [pe-fp-rest.resource.vehicle.vehicle-res :refer [save-vehicle-validator-fn
@@ -45,7 +46,10 @@
    db-spec
    user-id
    vehicle-id
+   plaintext-auth-token
    vehicle]
-  (fpcore/save-vehicle db-spec
-                       vehicle-id
-                       (assoc vehicle :fpvehicle/user-id user-id)))
+  (if (= (:fpvehicle/name vehicle) "log-me-out")
+    (userresutils/become-unauthenticated db-spec user-id plaintext-auth-token)
+    (fpcore/save-vehicle db-spec
+                         vehicle-id
+                         (assoc vehicle :fpvehicle/user-id user-id))))

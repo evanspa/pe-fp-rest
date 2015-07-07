@@ -52,6 +52,7 @@
   [version
    db-spec
    user-id
+   plaintext-auth-token
    new-fuelstation-id
    fuelstation]
   (fpcore/save-new-fuelstation db-spec

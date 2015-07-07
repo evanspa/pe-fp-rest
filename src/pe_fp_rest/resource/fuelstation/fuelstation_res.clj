@@ -26,6 +26,7 @@
    fuelstation-uri
    user-id
    fuelstation-id
+   plaintext-auth-token
    embedded-resources-fn
    links-fn]
   (rucore/put-or-post-invoker ctx
@@ -37,6 +38,7 @@
                               embedded-resources-fn
                               links-fn
                               [user-id fuelstation-id]
+                              plaintext-auth-token
                               save-fuelstation-validator-fn
                               fpval/sfs-any-issues
                               body-data-in-transform-fn
@@ -103,6 +105,9 @@
                                            (:uri (:request ctx))
                                            user-id
                                            fuelstation-id
+                                           (userresutils/get-plaintext-auth-token ctx
+                                                                                  auth-scheme
+                                                                                  auth-scheme-param-name)
                                            embedded-resources-fn
                                            links-fn))
   :handle-ok (fn [ctx] (rucore/handle-resp ctx

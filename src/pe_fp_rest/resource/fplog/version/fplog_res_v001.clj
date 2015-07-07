@@ -49,6 +49,7 @@
    db-spec
    user-id
    fplog-id
+   plaintext-auth-token
    fplog]
   (fpcore/save-fplog db-spec
                      fplog-id

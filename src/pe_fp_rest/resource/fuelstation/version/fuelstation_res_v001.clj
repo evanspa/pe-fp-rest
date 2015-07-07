@@ -45,6 +45,7 @@
    db-spec
    user-id
    fuelstation-id
+   plaintext-auth-token
    fuelstation]
   (fpcore/save-fuelstation db-spec
                            fuelstation-id

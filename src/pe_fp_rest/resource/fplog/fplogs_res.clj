@@ -25,6 +25,7 @@
    entity-uri-prefix
    fplogs-uri
    user-id
+   plaintext-auth-token
    embedded-resources-fn
    links-fn]
   (rucore/put-or-post-invoker ctx
@@ -36,6 +37,7 @@
                               embedded-resources-fn
                               links-fn
                               [user-id]
+                              plaintext-auth-token
                               new-fplog-validator-fn
                               fpval/sfplog-any-issues
                               body-data-in-transform-fn
@@ -100,6 +102,9 @@
                                         entity-uri-prefix
                                         (:uri (:request ctx))
                                         user-id
+                                        (userresutils/get-plaintext-auth-token ctx
+                                                                               auth-scheme
+                                                                               auth-scheme-param-name)
                                         embedded-resources-fn
                                         links-fn))
   :handle-created (fn [ctx] (rucore/handle-resp ctx

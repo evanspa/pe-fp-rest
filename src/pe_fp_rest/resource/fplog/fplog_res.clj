@@ -26,6 +26,7 @@
    fplog-uri
    user-id
    fplog-id
+   plaintext-auth-token
    embedded-resources-fn
    links-fn]
   (rucore/put-or-post-invoker ctx
@@ -37,6 +38,7 @@
                               embedded-resources-fn
                               links-fn
                               [user-id fplog-id]
+                              plaintext-auth-token
                               save-fplog-validator-fn
                               fpval/sfplog-any-issues
                               body-data-in-transform-fn
@@ -103,6 +105,9 @@
                                      (:uri (:request ctx))
                                      user-id
                                      fplog-id
+                                     (userresutils/get-plaintext-auth-token ctx
+                                                                            auth-scheme
+                                                                            auth-scheme-param-name)
                                      embedded-resources-fn
                                      links-fn))
   :handle-ok (fn [ctx] (rucore/handle-resp ctx

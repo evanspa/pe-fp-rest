@@ -49,6 +49,7 @@
   [version
    db-spec
    user-id
+   plaintext-auth-token
    new-envlog-id
    envlog]
   (fpcore/save-new-envlog db-spec

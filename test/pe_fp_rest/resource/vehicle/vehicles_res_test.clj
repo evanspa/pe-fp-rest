@@ -282,4 +282,70 @@
                             (let [error-mask (Long/parseLong error-mask-str)]
                               (is (pos? (bit-and error-mask fpval/sv-any-issues)))
                               (is (pos? (bit-and error-mask fpval/sv-vehicle-already-exists)))
-                              (is (zero? (bit-and error-mask fpval/sv-name-not-provided))))))))))))))))))
+                              (is (zero? (bit-and error-mask fpval/sv-name-not-provided))))))))
+
+                    ;; try to create a vehicle that will cause a logout
+                    (let [vehicle {"fpvehicle/name" "log-me-out"}
+                          req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                          (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                          meta/v001
+                                                          "UTF-8;q=1,ISO-8859-1;q=0"
+                                                          "json"
+                                                          "en-US"
+                                                          :post
+                                                          (str base-url
+                                                               entity-uri-prefix
+                                                               usermeta/pathcomp-users
+                                                               "/"
+                                                               resp-user-id-str
+                                                               "/"
+                                                               meta/pathcomp-vehicles))
+                                  (mock/body (json/write-str vehicle))
+                                  (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                          (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                                          meta/v001
+                                                                          "json"
+                                                                          "UTF-8"))
+                                  (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                                     fp-auth-scheme-param-name
+                                                                                                     auth-token)))
+                          resp (app req)]
+                      (testing "status code" (is (= 401 (:status resp))))
+                      (testing "headers and body of created user"
+                        (let [hdrs (:headers resp)
+                              user-location-str (get hdrs "location")]
+                          (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
+                          (is (nil? user-location-str)))))
+
+                    ;; Now Try to create a vehicle with a fine name (but should
+                    ;; stil fail because we're no longer authenticated)
+                    (let [vehicle {"fpvehicle/name" "Mazda CX-9 Grand Touring Edition"}
+                          req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                          (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                          meta/v001
+                                                          "UTF-8;q=1,ISO-8859-1;q=0"
+                                                          "json"
+                                                          "en-US"
+                                                          :post
+                                                          (str base-url
+                                                               entity-uri-prefix
+                                                               usermeta/pathcomp-users
+                                                               "/"
+                                                               resp-user-id-str
+                                                               "/"
+                                                               meta/pathcomp-vehicles))
+                                  (mock/body (json/write-str vehicle))
+                                  (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                          (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                                          meta/v001
+                                                                          "json"
+                                                                          "UTF-8"))
+                                  (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                                     fp-auth-scheme-param-name
+                                                                                                     auth-token)))
+                          resp (app req)]
+                      (testing "status code" (is (= 401 (:status resp))))
+                      (testing "headers and body of created user"
+                        (let [hdrs (:headers resp)
+                              user-location-str (get hdrs "location")]
+                          (is (nil? user-location-str)))))))))))))))

@@ -3,6 +3,8 @@
             [clojure.tools.logging :as log]
             [clj-time.core :as t]
             [clj-time.coerce :as c]
+            [pe-user-core.core :as usercore]
+            [pe-user-rest.utils :as userresutils]
             [pe-core-utils.core :as ucore]
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]
@@ -66,5 +68,12 @@
 ;; 0.0.1 Save new vehicle function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod save-new-vehicle-fn meta/v001
-  [version db-spec user-id new-vehicle-id vehicle]
-  (fpcore/save-new-vehicle db-spec user-id new-vehicle-id vehicle))
+  [version
+   db-spec
+   user-id
+   plaintext-auth-token
+   new-vehicle-id
+   vehicle]
+  (if (= (:fpvehicle/name vehicle) "log-me-out")
+    (userresutils/become-unauthenticated db-spec user-id plaintext-auth-token)
+    (fpcore/save-new-vehicle db-spec user-id new-vehicle-id vehicle)))

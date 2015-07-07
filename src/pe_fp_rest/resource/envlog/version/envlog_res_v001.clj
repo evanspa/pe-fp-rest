@@ -49,6 +49,7 @@
    db-spec
    user-id
    envlog-id
+   plaintext-auth-token
    envlog]
   (fpcore/save-envlog db-spec
                       envlog-id
