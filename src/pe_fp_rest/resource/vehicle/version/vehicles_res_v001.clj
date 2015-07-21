@@ -11,8 +11,6 @@
             [pe-fp-rest.resource.vehicle.vehicles-res :refer [new-vehicle-validator-fn
                                                               body-data-in-transform-fn
                                                               body-data-out-transform-fn
-                                                              extract-name-fn
-                                                              get-vehicles-by-name-fn
                                                               next-vehicle-id-fn
                                                               save-new-vehicle-fn]]))
 
@@ -41,20 +39,6 @@
   (-> vehicle
       (ucore/transform-map-val :fpvehicle/created-at #(c/to-long %))
       (ucore/transform-map-val :fpvehicle/updated-at #(c/to-long %))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 0.0.1 Name extraction functions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defmethod extract-name-fn meta/v001
-  [version vehicle]
-  (:fpvehicle/name vehicle))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 0.0.1 Entity lookup-by-name functions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defmethod get-vehicles-by-name-fn meta/v001
-  [version db-spec user-id name]
-  (fpcore/vehicles-for-user-by-name db-spec user-id name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Next vehicle id function

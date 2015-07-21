@@ -16,8 +16,6 @@
 (declare body-data-in-transform-fn)
 (declare body-data-out-transform-fn)
 (declare save-new-vehicle-fn)
-(declare extract-name-fn)
-(declare get-vehicles-by-name-fn)
 (declare next-vehicle-id-fn)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -47,11 +45,9 @@
                               fpval/sv-any-issues
                               body-data-in-transform-fn
                               body-data-out-transform-fn
-                              [[extract-name-fn
-                                get-vehicles-by-name-fn
-                                fpval/sv-vehicle-already-exists]]
                               next-vehicle-id-fn
                               save-new-vehicle-fn
+                              nil
                               nil
                               nil
                               nil
@@ -67,16 +63,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmulti-by-version body-data-in-transform-fn meta/v001)
 (defmulti-by-version body-data-out-transform-fn meta/v001)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Name extraction functions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defmulti-by-version extract-name-fn meta/v001)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Entity lookup-by-name functions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defmulti-by-version get-vehicles-by-name-fn meta/v001)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Next vehicle id function

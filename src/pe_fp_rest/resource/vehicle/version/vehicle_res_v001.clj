@@ -47,9 +47,11 @@
    user-id
    vehicle-id
    plaintext-auth-token
-   vehicle]
+   vehicle
+   if-unmodified-since]
   (if (= (:fpvehicle/name vehicle) "log-me-out")
     (userresutils/become-unauthenticated db-spec user-id plaintext-auth-token)
     (fpcore/save-vehicle db-spec
                          vehicle-id
-                         (assoc vehicle :fpvehicle/user-id user-id))))
+                         (assoc vehicle :fpvehicle/user-id user-id)
+                         if-unmodified-since)))

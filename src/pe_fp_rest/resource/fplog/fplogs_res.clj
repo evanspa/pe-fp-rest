@@ -42,9 +42,9 @@
                               fpval/sfplog-any-issues
                               body-data-in-transform-fn
                               body-data-out-transform-fn
-                              nil
                               next-fplog-id-fn
                               save-new-fplog-fn
+                              nil
                               nil
                               nil
                               nil

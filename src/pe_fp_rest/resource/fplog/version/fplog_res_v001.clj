@@ -50,7 +50,9 @@
    user-id
    fplog-id
    plaintext-auth-token
-   fplog]
+   fplog
+   if-unmodified-since]
   (fpcore/save-fplog db-spec
                      fplog-id
-                     (assoc fplog :fplog/user-id user-id)))
+                     (assoc fplog :fplog/user-id user-id)
+                     if-unmodified-since))

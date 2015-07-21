@@ -37,6 +37,7 @@
                                            fphdr-establish-session
                                            entity-uri-prefix
                                            fphdr-establish-session
+                                           fphdr-if-unmodified-since
                                            users-uri-template
                                            vehicles-uri-template
                                            fuelstations-uri-template
@@ -127,7 +128,8 @@
                            (Long. user-id)
                            (Long. fplog-id)
                            empty-embedded-resources-fn
-                           empty-links-fn)))
+                           empty-links-fn
+                           fphdr-if-unmodified-since)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Middleware-decorated app

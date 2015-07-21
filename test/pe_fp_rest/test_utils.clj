@@ -30,6 +30,7 @@
 (def fp-auth-scheme-param-name "fp-user-token")
 (def fphdr-auth-token "fp-rest-auth-token")
 (def fphdr-error-mask "fp-rest-error-mask")
+(def fphdr-if-unmodified-since "fp-if-unmodified-since")
 (def base-url "")
 (def entity-uri-prefix "/testing/")
 (def fphdr-establish-session "fp-establish-session")

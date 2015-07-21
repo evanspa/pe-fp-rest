@@ -42,9 +42,9 @@
                               fpval/sfs-any-issues
                               body-data-in-transform-fn
                               body-data-out-transform-fn
-                              nil
                               next-fuelstation-id-fn
                               save-new-fuelstation-fn
+                              nil
                               nil
                               nil
                               nil

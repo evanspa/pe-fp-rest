@@ -42,9 +42,9 @@
                               fpval/senvlog-any-issues
                               body-data-in-transform-fn
                               body-data-out-transform-fn
-                              nil
                               next-envlog-id-fn
                               save-new-envlog-fn
+                              nil
                               nil
                               nil
                               nil

@@ -46,7 +46,9 @@
    user-id
    fuelstation-id
    plaintext-auth-token
-   fuelstation]
+   fuelstation
+   if-unmodified-since]
   (fpcore/save-fuelstation db-spec
                            fuelstation-id
-                           (assoc fuelstation :fpfuelstation/user-id user-id)))
+                           (assoc fuelstation :fpfuelstation/user-id user-id)
+                           if-unmodified-since))

@@ -50,7 +50,9 @@
    user-id
    envlog-id
    plaintext-auth-token
-   envlog]
+   envlog
+   if-unmodified-since]
   (fpcore/save-envlog db-spec
                       envlog-id
-                      (assoc envlog :envlog/user-id user-id)))
+                      (assoc envlog :envlog/user-id user-id)
+                      if-unmodified-since))

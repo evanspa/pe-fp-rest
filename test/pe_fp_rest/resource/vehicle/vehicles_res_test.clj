@@ -270,7 +270,7 @@
                                                                                                      fp-auth-scheme-param-name
                                                                                                      auth-token)))
                           resp (app req)]
-                      (testing "status code" (is (= 403 (:status resp))))
+                      (testing "status code" (is (= 422 (:status resp))))
                       (testing "headers and body of created user"
                         (let [hdrs (:headers resp)
                               user-location-str (get hdrs "location")]
