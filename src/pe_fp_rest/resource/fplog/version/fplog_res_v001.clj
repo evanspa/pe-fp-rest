@@ -24,7 +24,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   db-spec
+   user-id
    fplog-entid
    fplog]
   (-> fplog
@@ -34,10 +34,16 @@
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
-   fplog-entid
+   user-id
+   fplog-id
+   base-url
+   entity-uri-prefix
+   entity-uri
    fplog]
   (-> fplog
+      (fplogresutils/fplog-data-out-transform base-url entity-uri-prefix)
       (ucore/transform-map-val :fplog/created-at #(c/to-long %))
+      (ucore/transform-map-val :fplog/deleted-at #(c/to-long %))
       (ucore/transform-map-val :fplog/updated-at #(c/to-long %))
       (ucore/transform-map-val :fplog/purchased-at #(c/to-long %))))
 

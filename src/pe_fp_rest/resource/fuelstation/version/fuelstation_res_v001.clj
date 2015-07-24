@@ -23,7 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   db-spec
+   user-id
    fuelstation-id
    fuelstation]
   (identity fuelstation))
@@ -31,10 +31,15 @@
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
+   user-id
    fuelstation-id
+   base-url
+   entity-uri-prefix
+   entity-uri
    fuelstation]
   (-> fuelstation
       (ucore/transform-map-val :fpfuelstation/created-at #(c/to-long %))
+      (ucore/transform-map-val :fpfuelstation/deleted-at #(c/to-long %))
       (ucore/transform-map-val :fpfuelstation/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -26,18 +26,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   db-spec
-   _   ;for 'vehicles' resource, the 'in' would only ever be a NEW (to-be-created) vehicle, so it by definition wouldn't have an id
+   user-id
    vehicle]
   (identity vehicle))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
-   vehicle-id
-   vehicle]
-  (-> vehicle
+   user-id
+   base-url
+   entity-uri-prefix
+   entity-uri
+   new-vehicle-id
+   new-vehicle]
+  (-> new-vehicle
       (ucore/transform-map-val :fpvehicle/created-at #(c/to-long %))
+      (ucore/transform-map-val :fpvehicle/deleted-at #(c/to-long %))
       (ucore/transform-map-val :fpvehicle/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

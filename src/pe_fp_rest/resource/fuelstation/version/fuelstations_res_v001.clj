@@ -24,18 +24,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   db-spec
-   _   ;for 'fuelstations' resource, the 'in' would only ever be a NEW (to-be-created) fuel station, so it by definition wouldn't have an id
+   user-id
    fuelstation]
   (identity fuelstation))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
-   fuelstation-id
-   fuelstation]
-  (-> fuelstation
+   user-id
+   base-url
+   entity-uri-prefix
+   entity-uri
+   new-fuelstation-id
+   new-fuelstation]
+  (-> new-fuelstation
       (ucore/transform-map-val :fpfuelstation/created-at #(c/to-long %))
+      (ucore/transform-map-val :fpfuelstation/deleted-at #(c/to-long %))
       (ucore/transform-map-val :fpfuelstation/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

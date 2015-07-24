@@ -25,8 +25,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   db-spec
-   _   ;for 'envlogs' resource, the 'in' would only ever be a NEW (to-be-created) envlog, so it by definition wouldn't have an id
+   user-id
    envlog]
   (-> envlog
       (envlogresutils/envlog-data-in-transform)
@@ -35,10 +34,16 @@
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
-   envlog-id
-   envlog]
-  (-> envlog
+   user-id
+   base-url
+   entity-uri-prefix
+   entity-uri
+   new-envlog-id
+   new-envlog]
+  (-> new-envlog
+      (envlogresutils/envlog-data-out-transform base-url entity-uri-prefix)
       (ucore/transform-map-val :envlog/created-at #(c/to-long %))
+      (ucore/transform-map-val :envlog/deleted-at #(c/to-long %))
       (ucore/transform-map-val :envlog/updated-at #(c/to-long %))
       (ucore/transform-map-val :envlog/logged-at #(c/to-long %))))
 

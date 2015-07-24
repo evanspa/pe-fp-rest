@@ -24,7 +24,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   db-spec
+   user-id
    envlog-id
    envlog]
   (-> envlog
@@ -34,10 +34,16 @@
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
+   user-id
    envlog-id
+   base-url
+   entity-uri-prefix
+   entity-uri
    envlog]
   (-> envlog
+      (envlogresutils/envlog-data-out-transform base-url entity-uri-prefix)
       (ucore/transform-map-val :envlog/created-at #(c/to-long %))
+      (ucore/transform-map-val :envlog/deleted-at #(c/to-long %))
       (ucore/transform-map-val :envlog/updated-at #(c/to-long %))
       (ucore/transform-map-val :envlog/logged-at #(c/to-long %))))
 

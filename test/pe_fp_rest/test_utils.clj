@@ -49,11 +49,19 @@
                       uddl/v0-create-user-account-ddl
                       uddl/v0-add-unique-constraint-user-account-email
                       uddl/v0-add-unique-constraint-user-account-username
-                      uddl/v0-create-authentication-token-ddl)
+                      uddl/v0-create-authentication-token-ddl
+                      uddl/v1-user-add-deleted-reason-col
+                      uddl/v1-user-add-suspended-at-col
+                      uddl/v1-user-add-suspended-reason-col
+                      uddl/v1-user-add-suspended-count-col)
     (jcore/with-try-catch-exec-as-query db-spec
-      (uddl/v0-create-updated-count-inc-trigger-function-fn db-spec))
+      (uddl/v0-create-updated-count-inc-trigger-fn db-spec))
     (jcore/with-try-catch-exec-as-query db-spec
       (uddl/v0-create-user-account-updated-count-trigger-fn db-spec))
+    (jcore/with-try-catch-exec-as-query db-spec
+      (uddl/v1-create-suspended-count-inc-trigger-fn db-spec))
+    (jcore/with-try-catch-exec-as-query db-spec
+      (uddl/v1-create-user-account-suspended-count-trigger-fn db-spec))
 
     ;; Vehicle setup
     (j/db-do-commands db-spec
@@ -64,7 +72,7 @@
                       fpddl/v2-vehicle-drop-erroneous-unique-name-constraint
                       fpddl/v2-vehicle-add-proper-unique-name-constraint)
     (jcore/with-try-catch-exec-as-query db-spec
-      (fpddl/v0-create-vehicle-updated-count-inc-trigger-function-fn db-spec))
+      (fpddl/v0-create-vehicle-updated-count-inc-trigger-fn db-spec))
     (jcore/with-try-catch-exec-as-query db-spec
       (fpddl/v0-create-vehicle-updated-count-trigger-fn db-spec))
 
@@ -74,7 +82,7 @@
                       fpddl/v0-create-fuelstation-ddl
                       fpddl/v0-create-index-on-fuelstation-name)
     (jcore/with-try-catch-exec-as-query db-spec
-      (fpddl/v0-create-fuelstation-updated-count-inc-trigger-function-fn db-spec))
+      (fpddl/v0-create-fuelstation-updated-count-inc-trigger-fn db-spec))
     (jcore/with-try-catch-exec-as-query db-spec
       (fpddl/v0-create-fuelstation-updated-count-trigger-fn db-spec))
 
@@ -83,7 +91,7 @@
                       true
                       fpddl/v0-create-fplog-ddl)
     (jcore/with-try-catch-exec-as-query db-spec
-      (fpddl/v0-create-fplog-updated-count-inc-trigger-function-fn db-spec))
+      (fpddl/v0-create-fplog-updated-count-inc-trigger-fn db-spec))
     (jcore/with-try-catch-exec-as-query db-spec
       (fpddl/v0-create-fplog-updated-count-trigger-fn db-spec))
 
@@ -92,7 +100,7 @@
                       true
                       fpddl/v0-create-envlog-ddl)
     (jcore/with-try-catch-exec-as-query db-spec
-      (fpddl/v0-create-envlog-updated-count-inc-trigger-function-fn db-spec))
+      (fpddl/v0-create-envlog-updated-count-inc-trigger-fn db-spec))
     (jcore/with-try-catch-exec-as-query db-spec
       (fpddl/v0-create-envlog-updated-count-trigger-fn db-spec))
     (f)))

@@ -24,7 +24,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   db-spec
+   user-id
    vehicle-id
    vehicle]
   (identity vehicle))
@@ -32,10 +32,15 @@
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
+   user-id
    vehicle-id
+   base-url
+   entity-uri-prefix
+   entity-uri
    vehicle]
   (-> vehicle
       (ucore/transform-map-val :fpvehicle/created-at #(c/to-long %))
+      (ucore/transform-map-val :fpvehicle/deleted-at #(c/to-long %))
       (ucore/transform-map-val :fpvehicle/updated-at #(c/to-long %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

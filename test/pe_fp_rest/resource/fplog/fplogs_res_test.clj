@@ -155,6 +155,7 @@
                                                           "json"
                                                           "UTF-8")))
           resp (app req)]
+      ;(log/debug "in test-1, resp: " resp)
       (let [hdrs (:headers resp)
             user-location-str (get hdrs "location")
             resp-user-id-str (rtucore/last-url-part user-location-str)
@@ -357,7 +358,8 @@
                                             resp-fplog-veh-link (get resp-fplog "fplog/vehicle")
                                             resp-fplog-veh-id (Long/parseLong (rtucore/last-url-part resp-fplog-veh-link))
                                             resp-fplog-fs-link (get resp-fplog "fplog/fuelstation")
-                                            resp-fplog-fs-id (Long/parseLong (rtucore/last-url-part resp-fplog-fs-link))]
+                                            resp-fplog-fs-id (Long/parseLong (rtucore/last-url-part resp-fplog-fs-link))
+                                            ]
                                         (is (not (nil? resp-fplog-id-str)))
                                         (is (not (nil? resp-fplog)))
                                         (is (= veh-300zx-location-str resp-fplog-veh-link))

@@ -25,8 +25,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod body-data-in-transform-fn meta/v001
   [version
-   db-spec
-   _   ;for 'fplogs' resource, the 'in' would only ever be a NEW (to-be-created) fplog, so it by definition wouldn't have an id
+   user-id
    fplog]
   (-> fplog
       (fplogresutils/fplog-data-in-transform)
@@ -35,10 +34,16 @@
 (defmethod body-data-out-transform-fn meta/v001
   [version
    db-spec
-   fplog-id
-   fplog]
-  (-> fplog
+   user-id
+   base-url
+   entity-uri-prefix
+   entity-uri
+   new-fplog-id
+   new-fplog]
+  (-> new-fplog
+      (fplogresutils/fplog-data-out-transform base-url entity-uri-prefix)
       (ucore/transform-map-val :fplog/created-at #(c/to-long %))
+      (ucore/transform-map-val :fplog/deleted-at #(c/to-long %))
       (ucore/transform-map-val :fplog/updated-at #(c/to-long %))
       (ucore/transform-map-val :fplog/purchased-at #(c/to-long %))))
 

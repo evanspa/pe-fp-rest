@@ -238,7 +238,7 @@
                       (is (= logged-at (c/from-long (Long. (get resp-envlog "envlog/logged-at")))))
                       (is (not (nil? (get resp-envlog "envlog/created-at"))))
                       (is (not (nil? (get resp-envlog "envlog/updated-at"))))
-                      (is (= 24.0 (get resp-envlog "envlog/reported-avg-mpg")))
+                      (is (= 24 (get resp-envlog "envlog/reported-avg-mpg")))
                       (is (= 22.1 (get resp-envlog "envlog/reported-avg-mph")))
                       (is (= 25001.2 (get resp-envlog "envlog/odometer")))
                       (is (= 46.4 (get resp-envlog "envlog/reported-outside-temp")))
