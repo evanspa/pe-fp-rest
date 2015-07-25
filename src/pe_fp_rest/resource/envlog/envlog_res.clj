@@ -14,9 +14,10 @@
 (declare body-data-in-transform-fn)
 (declare body-data-out-transform-fn)
 (declare save-envlog-fn)
+(declare delete-envlog-fn)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Handler
+;; Handlers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn handle-envlog-put!
   [ctx
@@ -52,6 +53,33 @@
                               nil
                               if-unmodified-since-hdr))
 
+(defn handle-envlog-delete!
+  [ctx
+   db-spec
+   base-url
+   entity-uri-prefix
+   envlog-uri
+   user-id
+   envlog-id
+   plaintext-auth-token
+   embedded-resources-fn
+   links-fn
+   delete-reason-hdr
+   if-unmodified-since-hdr]
+  (rucore/delete-invoker ctx
+                         db-spec
+                         base-url
+                         entity-uri-prefix
+                         envlog-uri
+                         embedded-resources-fn
+                         links-fn
+                         [user-id envlog-id]
+                         plaintext-auth-token
+                         body-data-out-transform-fn
+                         delete-envlog-fn
+                         delete-reason-hdr
+                         if-unmodified-since-hdr))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Validator function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -64,9 +92,14 @@
 (defmulti-by-version body-data-out-transform-fn meta/v001)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Save new envlog function
+;; Save envlog function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmulti-by-version save-envlog-fn meta/v001)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Delete envlog function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmulti-by-version delete-envlog-fn meta/v001)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Resource definition
