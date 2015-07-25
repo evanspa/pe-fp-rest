@@ -64,7 +64,6 @@
    plaintext-auth-token
    embedded-resources-fn
    links-fn
-   delete-reason-hdr
    if-unmodified-since-hdr]
   (rucore/delete-invoker ctx
                          db-spec
@@ -77,7 +76,7 @@
                          plaintext-auth-token
                          body-data-out-transform-fn
                          delete-envlog-fn
-                         delete-reason-hdr
+                         nil
                          if-unmodified-since-hdr))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -121,14 +120,13 @@
   :available-media-types (rucore/enumerate-media-types (meta/supported-media-types mt-subtype-prefix))
   :available-charsets rumeta/supported-char-sets
   :available-languages rumeta/supported-languages
-  :allowed-methods [:put]
+  :allowed-methods [:put :delete]
   :authorized? (fn [ctx] (userresutils/authorized? ctx
                                                    db-spec
                                                    user-id
                                                    auth-scheme
                                                    auth-scheme-param-name))
   :known-content-type? (rucore/known-content-type-predicate (meta/supported-media-types mt-subtype-prefix))
-  :exists? (fn [ctx] (not (nil? (fpcore/envlog-by-id db-spec envlog-id))))
   :can-put-to-missing? false
   :new? false
   :respond-with-entity? true
@@ -146,6 +144,19 @@
                                       embedded-resources-fn
                                       links-fn
                                       if-unmodified-since-hdr))
+  :delete! (fn [ctx] (handle-envlog-delete! ctx
+                                            db-spec
+                                            base-url
+                                            entity-uri-prefix
+                                            (:uri (:request ctx))
+                                            user-id
+                                            envlog-id
+                                            (userresutils/get-plaintext-auth-token ctx
+                                                                                   auth-scheme
+                                                                                   auth-scheme-param-name)
+                                            embedded-resources-fn
+                                            links-fn
+                                            if-unmodified-since-hdr))
   :handle-ok (fn [ctx] (rucore/handle-resp ctx
                                            hdr-auth-token
                                            hdr-error-mask)))

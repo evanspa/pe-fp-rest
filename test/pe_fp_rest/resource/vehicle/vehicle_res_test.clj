@@ -14,6 +14,8 @@
             [pe-fp-rest.resource.vehicle.version.vehicles-res-v001]
             [pe-fp-rest.resource.vehicle.vehicle-res :as vehres]
             [pe-fp-rest.resource.vehicle.version.vehicle-res-v001]
+            [pe-fp-rest.resource.envlog.envlogs-res :as envlogsres]
+            [pe-fp-rest.resource.envlog.version.envlogs-res-v001]
             [pe-fp-rest.meta :as meta]
             [pe-user-core.ddl :as uddl]
             [pe-fp-core.ddl :as fpddl]
@@ -38,6 +40,7 @@
                                            users-uri-template
                                            vehicles-uri-template
                                            vehicle-uri-template
+                                           envlogs-uri-template
                                            db-spec
                                            fixture-maker]]))
 
@@ -98,7 +101,20 @@
                            (Long. vehicle-id)
                            empty-embedded-resources-fn
                            empty-links-fn
-                           fphdr-if-unmodified-since)))
+                           fphdr-if-unmodified-since))
+  (ANY envlogs-uri-template
+       [user-id]
+       (envlogsres/envlogs-res db-spec
+                               fpmt-subtype-prefix
+                               fphdr-auth-token
+                               fphdr-error-mask
+                               fp-auth-scheme
+                               fp-auth-scheme-param-name
+                               base-url
+                               entity-uri-prefix
+                               (Long. user-id)
+                               empty-embedded-resources-fn
+                               empty-links-fn)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Middleware-decorated app
@@ -309,3 +325,166 @@
                             (is (pos? (bit-and error-mask fpval/sv-any-issues)))
                             (is (pos? (bit-and error-mask fpval/sv-vehicle-already-exists)))
                             (is (zero? (bit-and error-mask fpval/sv-name-not-provided)))))))))))))))))
+
+(deftest integration-tests-2
+  (testing "Successful deletion of vehicles."
+    (let [user {"user/name" "Karen Smith"
+                "user/email" "smithka@testing.com"
+                "user/username" "smithk"
+                "user/password" "insecure"}
+          req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                          (usermeta/mt-subtype-user fpmt-subtype-prefix)
+                                          usermeta/v001
+                                          "UTF-8;q=1,ISO-8859-1;q=0"
+                                          "json"
+                                          "en-US"
+                                          :post
+                                          users-uri-template)
+                  (rtucore/header fphdr-establish-session "true")
+                  (mock/body (json/write-str user))
+                  (mock/content-type (rucore/content-type rumeta/mt-type
+                                                          (usermeta/mt-subtype-user fpmt-subtype-prefix)
+                                                          usermeta/v001
+                                                          "json"
+                                                          "UTF-8")))
+          resp (app req)]
+      (let [hdrs (:headers resp)
+            resp-body-stream (:body resp)
+            user-location-str (get hdrs "location")
+            resp-user-id-str (rtucore/last-url-part user-location-str)
+            pct (rucore/parse-media-type (get hdrs "Content-Type"))
+            charset (get rumeta/char-sets (:charset pct))
+            resp-user (rucore/read-res pct resp-body-stream charset)
+            auth-token (get hdrs fphdr-auth-token)
+            [loaded-user-id loaded-user] (usercore/load-user-by-authtoken db-spec
+                                                                          (Long. resp-user-id-str)
+                                                                          auth-token)]
+        ;; Create 1st vehicle
+        (let [vehicle {"fpvehicle/name" "Jeep"
+                       "fpvehicle/default-octane" 87}
+              vehicles-uri (str base-url
+                                entity-uri-prefix
+                                usermeta/pathcomp-users
+                                "/"
+                                resp-user-id-str
+                                "/"
+                                meta/pathcomp-vehicles)
+              req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                              (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                              meta/v001
+                                              "UTF-8;q=1,ISO-8859-1;q=0"
+                                              "json"
+                                              "en-US"
+                                              :post
+                                              vehicles-uri)
+                      (mock/body (json/write-str vehicle))
+                      (mock/content-type (rucore/content-type rumeta/mt-type
+                                                              (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                              meta/v001
+                                                              "json"
+                                                              "UTF-8"))
+                      (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                         fp-auth-scheme-param-name
+                                                                                         auth-token)))
+              resp (app req)
+              hdrs (:headers resp)
+              veh-location-str (get hdrs "location")
+              vehicle-id (rucore/entity-id-from-uri veh-location-str)]
+          (testing "status code" (is (= 201 (:status resp))))
+          ;; create envlog against vehicle
+          (let [resp-body-stream (:body resp)
+                logged-at (t/now)
+                envlog {"envlog/vehicle" veh-location-str
+                        "envlog/logged-at" (c/to-long logged-at)
+                        "envlog/reported-avg-mpg" 24
+                        "envlog/reported-avg-mph" 22.1
+                        "envlog/odometer" 25001.2
+                        "envlog/reported-outside-temp" 46.4
+                        "envlog/dte" 168}
+                envlogs-uri (str base-url
+                                 entity-uri-prefix
+                                 usermeta/pathcomp-users
+                                 "/"
+                                 resp-user-id-str
+                                 "/"
+                                 meta/pathcomp-environment-logs)
+                req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                meta/v001
+                                                "UTF-8;q=1,ISO-8859-1;q=0"
+                                                "json"
+                                                "en-US"
+                                                :post
+                                                envlogs-uri)
+                        (mock/body (json/write-str envlog))
+                        (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                meta/v001
+                                                                "json"
+                                                                "UTF-8"))
+                        (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                           fp-auth-scheme-param-name
+                                                                                           auth-token)))
+                resp (app req)
+                hdrs (:headers resp)]
+            (testing "status code" (is (= 201 (:status resp)))))
+          ;; create another (2nd) envlog against vehicle
+          (let [resp-body-stream (:body resp)
+                veh-location-str (get hdrs "location")
+                logged-at (t/now)
+                envlog {"envlog/vehicle" veh-location-str
+                        "envlog/logged-at" (c/to-long logged-at)
+                        "envlog/reported-avg-mpg" 25
+                        "envlog/reported-avg-mph" 23.1
+                        "envlog/odometer" 25001.3
+                        "envlog/reported-outside-temp" 46.5
+                        "envlog/dte" 169}
+                envlogs-uri (str base-url
+                                 entity-uri-prefix
+                                 usermeta/pathcomp-users
+                                 "/"
+                                 resp-user-id-str
+                                 "/"
+                                 meta/pathcomp-environment-logs)
+                req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                meta/v001
+                                                "UTF-8;q=1,ISO-8859-1;q=0"
+                                                "json"
+                                                "en-US"
+                                                :post
+                                                envlogs-uri)
+                        (mock/body (json/write-str envlog))
+                        (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                meta/v001
+                                                                "json"
+                                                                "UTF-8"))
+                        (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                           fp-auth-scheme-param-name
+                                                                                           auth-token)))
+                resp (app req)]
+            (testing "status code" (is (= 201 (:status resp)))))
+          (is (= 2 (count (fpcore/envlogs-for-vehicle db-spec vehicle-id))))
+          ;; now we'll delete the vehicle
+          (let [req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                meta/v001
+                                                "UTF-8;q=1,ISO-8859-1;q=0"
+                                                "json"
+                                                "en-US"
+                                                :delete
+                                                veh-location-str)
+                        (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                meta/v001
+                                                                "json"
+                                                                "UTF-8"))
+                        (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                           fp-auth-scheme-param-name
+                                                                                           auth-token)))
+                resp (app req)]
+            (testing "status code" (is (= 204 (:status resp))))
+            (is (nil? (fpcore/vehicle-by-id db-spec vehicle-id)))
+            (is (= 0 (count (fpcore/envlogs-for-vehicle db-spec vehicle-id))))
+            (is (= 2 (count (fpcore/envlogs-for-vehicle db-spec vehicle-id false))))))))))

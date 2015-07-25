@@ -14,6 +14,7 @@
 (declare body-data-in-transform-fn)
 (declare body-data-out-transform-fn)
 (declare save-fplog-fn)
+(declare delete-fplog-fn)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handler
@@ -52,6 +53,32 @@
                               nil
                               if-unmodified-since-hdr))
 
+(defn handle-fplog-delete!
+  [ctx
+   db-spec
+   base-url
+   entity-uri-prefix
+   fplog-uri
+   user-id
+   fplog-id
+   plaintext-auth-token
+   embedded-resources-fn
+   links-fn
+   if-unmodified-since-hdr]
+  (rucore/delete-invoker ctx
+                         db-spec
+                         base-url
+                         entity-uri-prefix
+                         fplog-uri
+                         embedded-resources-fn
+                         links-fn
+                         [user-id fplog-id]
+                         plaintext-auth-token
+                         body-data-out-transform-fn
+                         delete-fplog-fn
+                         nil
+                         if-unmodified-since-hdr))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Validator function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,6 +94,11 @@
 ;; Save new fplog function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmulti-by-version save-fplog-fn meta/v001)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Delete fplog function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmulti-by-version delete-fplog-fn meta/v001)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Resource definition
@@ -88,14 +120,13 @@
   :available-media-types (rucore/enumerate-media-types (meta/supported-media-types mt-subtype-prefix))
   :available-charsets rumeta/supported-char-sets
   :available-languages rumeta/supported-languages
-  :allowed-methods [:put]
+  :allowed-methods [:put :delete]
   :authorized? (fn [ctx] (userresutils/authorized? ctx
                                                    db-spec
                                                    user-id
                                                    auth-scheme
                                                    auth-scheme-param-name))
   :known-content-type? (rucore/known-content-type-predicate (meta/supported-media-types mt-subtype-prefix))
-  :exists? (fn [ctx] (not (nil? (fpcore/fplog-by-id db-spec fplog-id))))
   :can-put-to-missing? false
   :new? false
   :respond-with-entity? true
@@ -113,6 +144,19 @@
                                      embedded-resources-fn
                                      links-fn
                                      if-unmodified-since-hdr))
+  :delete! (fn [ctx] (handle-fplog-delete! ctx
+                                           db-spec
+                                           base-url
+                                           entity-uri-prefix
+                                           (:uri (:request ctx))
+                                           user-id
+                                           fplog-id
+                                           (userresutils/get-plaintext-auth-token ctx
+                                                                                  auth-scheme
+                                                                                  auth-scheme-param-name)
+                                           embedded-resources-fn
+                                           links-fn
+                                           if-unmodified-since-hdr))
   :handle-ok (fn [ctx] (rucore/handle-resp ctx
                                            hdr-auth-token
                                            hdr-error-mask)))

@@ -10,7 +10,8 @@
             [pe-fp-rest.resource.fplog.fplog-res :refer [save-fplog-validator-fn
                                                          body-data-in-transform-fn
                                                          body-data-out-transform-fn
-                                                         save-fplog-fn]]))
+                                                         save-fplog-fn
+                                                         delete-fplog-fn]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Validator function
@@ -62,3 +63,16 @@
                      fplog-id
                      (assoc fplog :fplog/user-id user-id)
                      if-unmodified-since))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 0.0.1 Delete fplog function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod delete-fplog-fn meta/v001
+  [version
+   db-spec
+   user-id
+   fplog-id
+   delete-reason
+   plaintext-auth-token
+   if-unmodified-since]
+  (fpcore/mark-fplog-as-deleted db-spec fplog-id if-unmodified-since))

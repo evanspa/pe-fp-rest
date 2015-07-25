@@ -115,7 +115,7 @@
 ;; The Tests
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (deftest integration-tests-1
-  (testing "Successful creation of user, app txn logs and fuelstations."
+  (testing "Successful create, update and delete of fuelstation"
     (is (nil? (usercore/load-user-by-email db-spec "smithka@testing.com")))
     (is (nil? (usercore/load-user-by-username db-spec "smithk")))
     (let [user {"user/name" "Karen Smith"

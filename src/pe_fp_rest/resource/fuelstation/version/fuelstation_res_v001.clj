@@ -9,7 +9,8 @@
             [pe-fp-rest.resource.fuelstation.fuelstation-res :refer [save-fuelstation-validator-fn
                                                                      body-data-in-transform-fn
                                                                      body-data-out-transform-fn
-                                                                     save-fuelstation-fn]]))
+                                                                     save-fuelstation-fn
+                                                                     delete-fuelstation-fn]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Validator function
@@ -57,3 +58,16 @@
                            fuelstation-id
                            (assoc fuelstation :fpfuelstation/user-id user-id)
                            if-unmodified-since))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 0.0.1 Delete fuelstation function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod delete-fuelstation-fn meta/v001
+  [version
+   db-spec
+   user-id
+   fuelstation-id
+   delete-reason
+   plaintext-auth-token
+   if-unmodified-since]
+  (fpcore/mark-fuelstation-as-deleted db-spec fuelstation-id if-unmodified-since))

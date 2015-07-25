@@ -204,7 +204,7 @@
                 veh-location-str (get hdrs "location")]
             (let [loaded-vehicles (fpcore/vehicles-for-user db-spec loaded-user-id)]
               (is (= 1 (count loaded-vehicles)))
-                                        ; Create 1st environment log
+              ; Create 1st environment log
               (is (empty? (fpcore/envlogs-for-user db-spec loaded-user-id)))
               (let [logged-at (t/now)
                     envlog {"envlog/vehicle" veh-location-str
@@ -297,4 +297,51 @@
                           (is (= 21.1M (:envlog/reported-avg-mph loaded-envlog)))
                           (is (= 25000.2M (:envlog/odometer loaded-envlog)))
                           (is (= 45.4M (:envlog/reported-outside-temp loaded-envlog)))
-                          (is (= 167M (:envlog/dte loaded-envlog))))))))))))))))
+                          (is (= 167M (:envlog/dte loaded-envlog))))))
+                    ;; Delete the environment log
+                    (let [req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                          (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                          meta/v001
+                                                          "UTF-8;q=1,ISO-8859-1;q=0"
+                                                          "json"
+                                                          "en-US"
+                                                          :delete
+                                                          envlog-location-str)
+                                  (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                          (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                          meta/v001
+                                                                          "json"
+                                                                          "UTF-8"))
+                                  (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                                     fp-auth-scheme-param-name
+                                                                                                     auth-token)))
+                          resp (app req)]
+                      (testing "status code" (is (= 204 (:status resp))))
+                      (is (empty? (fpcore/envlogs-for-user db-spec loaded-user-id))))
+                    ;; Sanity check - try to do a put and make sure we get a 404
+                    (let [envlog {"envlog/vehicle" veh-location-str
+                                  "envlog/logged-at" (c/to-long (t/now))
+                                  "envlog/reported-avg-mpg" 23
+                                  "envlog/reported-avg-mph" 21.1
+                                  "envlog/odometer" 25000.2
+                                  "envlog/reported-outside-temp" 45.4
+                                  "envlog/dte" 167}
+                          req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                          (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                          meta/v001
+                                                          "UTF-8;q=1,ISO-8859-1;q=0"
+                                                          "json"
+                                                          "en-US"
+                                                          :put
+                                                          envlog-location-str)
+                                  (mock/body (json/write-str envlog))
+                                  (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                          (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                          meta/v001
+                                                                          "json"
+                                                                          "UTF-8"))
+                                  (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                                     fp-auth-scheme-param-name
+                                                                                                     auth-token)))
+                          resp (app req)]
+                      (testing "status code" (is (= 404 (:status resp)))))))))))))))

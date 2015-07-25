@@ -10,7 +10,8 @@
             [pe-fp-rest.resource.envlog.envlog-res :refer [save-envlog-validator-fn
                                                            body-data-in-transform-fn
                                                            body-data-out-transform-fn
-                                                           save-envlog-fn]]))
+                                                           save-envlog-fn
+                                                           delete-envlog-fn]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Validator function
@@ -62,3 +63,16 @@
                       envlog-id
                       (assoc envlog :envlog/user-id user-id)
                       if-unmodified-since))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 0.0.1 Delete envlog function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod delete-envlog-fn meta/v001
+  [version
+   db-spec
+   user-id
+   envlog-id
+   delete-reason
+   plaintext-auth-token
+   if-unmodified-since]
+  (fpcore/mark-envlog-as-deleted db-spec envlog-id if-unmodified-since))

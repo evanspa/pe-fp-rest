@@ -148,7 +148,7 @@
 ;; The Tests
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (deftest integration-tests-1
-  (testing "Successful creation of user, app txn logs and vehicles."
+  (testing "Successful create update and delete of fplogs"
     (is (nil? (usercore/load-user-by-email db-spec "smithka@testing.com")))
     (is (nil? (usercore/load-user-by-username db-spec "smithk")))
     (let [user {"user/name" "Karen Smith"
@@ -457,4 +457,52 @@
                                                         (is (= 0.15M (:fplog/car-wash-per-gal-discount loaded-fplog)))
                                                         (is (= 15.3M (:fplog/num-gallons loaded-fplog)))
                                                         (is (= 88 (:fplog/octane loaded-fplog)))
-                                                        (is (= 2.31M (:fplog/gallon-price loaded-fplog)))))))))))))))))))))))))))))))
+                                                        (is (= 2.31M (:fplog/gallon-price loaded-fplog)))))
+                                                    ;; Delete the fp log
+                                                    (let [req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                                                          (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                                          meta/v001
+                                                                                          "UTF-8;q=1,ISO-8859-1;q=0"
+                                                                                          "json"
+                                                                                          "en-US"
+                                                                                          :delete
+                                                                                          fplog-location-str)
+                                                                  (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                                                          (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                                                          meta/v001
+                                                                                                          "json"
+                                                                                                          "UTF-8"))
+                                                                  (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                                                                     fp-auth-scheme-param-name
+                                                                                                                                     auth-token)))
+                                                          resp (app req)]
+                                                      (testing "status code" (is (= 204 (:status resp))))
+                                                      (is (empty? (fpcore/fplogs-for-user db-spec loaded-user-id))))
+                                                    ;; Sanity check - try to do a put and make sure we get a 404
+                                                    (let [fplog {"fplog/vehicle" veh-cx9-location-str
+                                                                 "fplog/fuelstation" fs-eds-location-str
+                                                                 "fplog/purchased-at" (c/to-long purchased-at)
+                                                                 "fplog/got-car-wash" false
+                                                                 "fplog/car-wash-per-gal-discount" 0.15
+                                                                 "fplog/num-gallons" 15.3
+                                                                 "fplog/octane" 88
+                                                                 "fplog/gallon-price" 2.31}
+                                                          req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                                                          (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                                          meta/v001
+                                                                                          "UTF-8;q=1,ISO-8859-1;q=0"
+                                                                                          "json"
+                                                                                          "en-US"
+                                                                                          :put
+                                                                                          fplog-location-str)
+                                                                  (mock/body (json/write-str fplog))
+                                                                  (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                                                          (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                                                          meta/v001
+                                                                                                          "json"
+                                                                                                          "UTF-8"))
+                                                                  (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                                                                     fp-auth-scheme-param-name
+                                                                                                                                     auth-token)))
+                                                          resp (app req)]
+                                                      (testing "status code" (is (= 404 (:status resp)))))))))))))))))))))))))))))))

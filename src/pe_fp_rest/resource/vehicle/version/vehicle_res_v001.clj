@@ -8,9 +8,10 @@
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]
             [pe-fp-rest.resource.vehicle.vehicle-res :refer [save-vehicle-validator-fn
-                                                              body-data-in-transform-fn
-                                                              body-data-out-transform-fn
-                                                              save-vehicle-fn]]))
+                                                             body-data-in-transform-fn
+                                                             body-data-out-transform-fn
+                                                             save-vehicle-fn
+                                                             delete-vehicle-fn]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Validator function
@@ -60,3 +61,16 @@
                          vehicle-id
                          (assoc vehicle :fpvehicle/user-id user-id)
                          if-unmodified-since)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 0.0.1 Delete vehicle function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod delete-vehicle-fn meta/v001
+  [version
+   db-spec
+   user-id
+   vehicle-id
+   delete-reason
+   plaintext-auth-token
+   if-unmodified-since]
+  (fpcore/mark-vehicle-as-deleted db-spec vehicle-id if-unmodified-since))
