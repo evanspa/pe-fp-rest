@@ -18,11 +18,11 @@
                  [pe-jdbc-utils "0.0.14"]
                  [pe-user-core "0.1.26"]
                  [pe-rest-utils "0.0.24"]
-                 [pe-user-rest "0.0.32"]
+                 [pe-user-rest "0.0.34"]
                  [pe-fp-core "0.0.17"]]
   :resource-paths ["resources"]
   :codox {:exclude [user]
-          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.17/"
+          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.18/"
           :src-linenum-anchor-prefix "L"}
   :profiles {:dev {:source-paths ["dev"]  ;ensures 'user.clj' gets auto-loaded
                    :plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]
