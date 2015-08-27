@@ -15,6 +15,7 @@
 (declare body-data-out-transform-fn)
 (declare save-envlog-fn)
 (declare delete-envlog-fn)
+(declare load-envlog-fn)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handlers
@@ -79,6 +80,33 @@
                          nil
                          if-unmodified-since-hdr))
 
+(defn handle-envlog-get
+  [ctx
+   db-spec
+   base-url
+   entity-uri-prefix
+   envlog-uri
+   user-id
+   envlog-id
+   plaintext-auth-token
+   embedded-resources-fn
+   links-fn
+   if-modified-since-hdr
+   resp-gen-fn]
+  (rucore/get-invoker ctx
+                      db-spec
+                      base-url
+                      entity-uri-prefix
+                      envlog-uri
+                      embedded-resources-fn
+                      links-fn
+                      [user-id envlog-id]
+                      plaintext-auth-token
+                      body-data-out-transform-fn
+                      load-envlog-fn
+                      if-modified-since-hdr
+                      resp-gen-fn))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Validator function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -101,6 +129,11 @@
 (defmulti-by-version delete-envlog-fn meta/v001)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Load envlog function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmulti-by-version load-envlog-fn meta/v001)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Resource definition
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defresource envlog-res
@@ -116,11 +149,12 @@
    envlog-id
    embedded-resources-fn
    links-fn
-   if-unmodified-since-hdr]
+   if-unmodified-since-hdr
+   if-modified-since-hdr]
   :available-media-types (rucore/enumerate-media-types (meta/supported-media-types mt-subtype-prefix))
   :available-charsets rumeta/supported-char-sets
   :available-languages rumeta/supported-languages
-  :allowed-methods [:put :delete]
+  :allowed-methods [:put :delete :get]
   :authorized? (fn [ctx] (userresutils/authorized? ctx
                                                    db-spec
                                                    user-id
@@ -131,32 +165,48 @@
   :new? false
   :respond-with-entity? true
   :multiple-representations? false
-  :put! (fn [ctx] (handle-envlog-put! ctx
-                                      db-spec
-                                      base-url
-                                      entity-uri-prefix
-                                      (:uri (:request ctx))
-                                      user-id
-                                      envlog-id
-                                      (userresutils/get-plaintext-auth-token ctx
-                                                                             auth-scheme
-                                                                             auth-scheme-param-name)
-                                      embedded-resources-fn
-                                      links-fn
-                                      if-unmodified-since-hdr))
-  :delete! (fn [ctx] (handle-envlog-delete! ctx
-                                            db-spec
-                                            base-url
-                                            entity-uri-prefix
-                                            (:uri (:request ctx))
-                                            user-id
-                                            envlog-id
-                                            (userresutils/get-plaintext-auth-token ctx
-                                                                                   auth-scheme
-                                                                                   auth-scheme-param-name)
-                                            embedded-resources-fn
-                                            links-fn
-                                            if-unmodified-since-hdr))
-  :handle-ok (fn [ctx] (rucore/handle-resp ctx
-                                           hdr-auth-token
-                                           hdr-error-mask)))
+  :put! (fn [ctx]
+          (handle-envlog-put! ctx
+                              db-spec
+                              base-url
+                              entity-uri-prefix
+                              (:uri (:request ctx))
+                              user-id
+                              envlog-id
+                              (userresutils/get-plaintext-auth-token ctx
+                                                                     auth-scheme
+                                                                     auth-scheme-param-name)
+                              embedded-resources-fn
+                              links-fn
+                              if-unmodified-since-hdr))
+  :delete! (fn [ctx]
+             (handle-envlog-delete! ctx
+                                    db-spec
+                                    base-url
+                                    entity-uri-prefix
+                                    (:uri (:request ctx))
+                                    user-id
+                                    envlog-id
+                                    (userresutils/get-plaintext-auth-token ctx
+                                                                           auth-scheme
+                                                                           auth-scheme-param-name)
+                                    embedded-resources-fn
+                                    links-fn
+                                    if-unmodified-since-hdr))
+  :handle-ok (fn [ctx]
+               (if (= (get-in ctx [:request :request-method]) :get)
+                 (handle-envlog-get ctx
+                                    db-spec
+                                    base-url
+                                    entity-uri-prefix
+                                    (:uri (:request ctx))
+                                    user-id
+                                    envlog-id
+                                    (userresutils/get-plaintext-auth-token ctx
+                                                                           auth-scheme
+                                                                           auth-scheme-param-name)
+                                    embedded-resources-fn
+                                    links-fn
+                                    if-modified-since-hdr
+                                    #(rucore/handle-resp % hdr-auth-token hdr-error-mask))
+                 (rucore/handle-resp ctx hdr-auth-token hdr-error-mask))))

@@ -11,7 +11,8 @@
                                                          body-data-in-transform-fn
                                                          body-data-out-transform-fn
                                                          save-fplog-fn
-                                                         delete-fplog-fn]]))
+                                                         delete-fplog-fn
+                                                         load-fplog-fn]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Validator function
@@ -76,3 +77,15 @@
    plaintext-auth-token
    if-unmodified-since]
   (fpcore/mark-fplog-as-deleted db-spec fplog-id if-unmodified-since))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 0.0.1 Load fplog function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod load-fplog-fn meta/v001
+  [version
+   db-spec
+   user-id
+   fplog-id
+   plaintext-auth-token
+   if-modified-since]
+  (fpcore/fplog-by-id db-spec fplog-id true))

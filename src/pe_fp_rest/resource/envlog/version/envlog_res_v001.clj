@@ -11,7 +11,8 @@
                                                            body-data-in-transform-fn
                                                            body-data-out-transform-fn
                                                            save-envlog-fn
-                                                           delete-envlog-fn]]))
+                                                           delete-envlog-fn
+                                                           load-envlog-fn]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Validator function
@@ -76,3 +77,15 @@
    plaintext-auth-token
    if-unmodified-since]
   (fpcore/mark-envlog-as-deleted db-spec envlog-id if-unmodified-since))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 0.0.1 Load envlog function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod load-envlog-fn meta/v001
+  [version
+   db-spec
+   user-id
+   envlog-id
+   plaintext-auth-token
+   if-modified-since]
+  (fpcore/envlog-by-id db-spec envlog-id true))

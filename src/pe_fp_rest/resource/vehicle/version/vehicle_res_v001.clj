@@ -11,7 +11,8 @@
                                                              body-data-in-transform-fn
                                                              body-data-out-transform-fn
                                                              save-vehicle-fn
-                                                             delete-vehicle-fn]]))
+                                                             delete-vehicle-fn
+                                                             load-vehicle-fn]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Validator function
@@ -74,3 +75,15 @@
    plaintext-auth-token
    if-unmodified-since]
   (fpcore/mark-vehicle-as-deleted db-spec vehicle-id if-unmodified-since))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 0.0.1 Load vehicle function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod load-vehicle-fn meta/v001
+  [version
+   db-spec
+   user-id
+   vehicle-id
+   plaintext-auth-token
+   if-modified-since]
+  (fpcore/vehicle-by-id db-spec vehicle-id true))

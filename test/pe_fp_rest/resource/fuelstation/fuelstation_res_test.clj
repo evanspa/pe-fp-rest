@@ -33,6 +33,7 @@
                                            fphdr-error-mask
                                            fphdr-establish-session
                                            fphdr-if-unmodified-since
+                                           fphdr-if-modified-since
                                            entity-uri-prefix
                                            users-uri-template
                                            fuelstations-uri-template
@@ -96,7 +97,8 @@
                               (Long. fuelstation-id)
                               empty-embedded-resources-fn
                               empty-links-fn
-                              fphdr-if-unmodified-since)))
+                              fphdr-if-unmodified-since
+                              fphdr-if-modified-since)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Middleware-decorated app

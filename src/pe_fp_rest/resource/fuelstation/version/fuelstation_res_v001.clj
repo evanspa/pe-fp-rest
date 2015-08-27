@@ -10,7 +10,8 @@
                                                                      body-data-in-transform-fn
                                                                      body-data-out-transform-fn
                                                                      save-fuelstation-fn
-                                                                     delete-fuelstation-fn]]))
+                                                                     delete-fuelstation-fn
+                                                                     load-fuelstation-fn]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Validator function
@@ -71,3 +72,15 @@
    plaintext-auth-token
    if-unmodified-since]
   (fpcore/mark-fuelstation-as-deleted db-spec fuelstation-id if-unmodified-since))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 0.0.1 Load fuelstation function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defmethod load-fuelstation-fn meta/v001
+  [version
+   db-spec
+   user-id
+   fuelstation-id
+   plaintext-auth-token
+   if-modified-since]
+  (fpcore/fuelstation-by-id db-spec fuelstation-id true))

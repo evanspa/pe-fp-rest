@@ -36,6 +36,7 @@
                                            fphdr-error-mask
                                            fphdr-establish-session
                                            fphdr-if-unmodified-since
+                                           fphdr-if-modified-since
                                            entity-uri-prefix
                                            users-uri-template
                                            vehicles-uri-template
@@ -101,7 +102,8 @@
                            (Long. vehicle-id)
                            empty-embedded-resources-fn
                            empty-links-fn
-                           fphdr-if-unmodified-since))
+                           fphdr-if-unmodified-since
+                           fphdr-if-modified-since))
   (ANY envlogs-uri-template
        [user-id]
        (envlogsres/envlogs-res db-spec
@@ -233,8 +235,8 @@
           (testing "status code" (is (= 201 (:status resp))))
           (testing "body of created vehicle"
             (let [hdrs (:headers resp)
-              resp-body-stream (:body resp)
-              veh-location-str (get hdrs "location")]
+                  resp-body-stream (:body resp)
+                  veh-location-str (get hdrs "location")]
               (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
               (is (not (nil? resp-body-stream)))
               (is (not (nil? veh-location-str)))
@@ -488,3 +490,100 @@
             (is (nil? (fpcore/vehicle-by-id db-spec vehicle-id)))
             (is (= 0 (count (fpcore/envlogs-for-vehicle db-spec vehicle-id))))
             (is (= 2 (count (fpcore/envlogs-for-vehicle db-spec vehicle-id false))))))))))
+
+(deftest integration-tests-3
+  (testing "Successful fetching of vehicles."
+    (let [user {"user/name" "Karen Smith"
+                "user/email" "smithka@testing.com"
+                "user/username" "smithk"
+                "user/password" "insecure"}
+          req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                          (usermeta/mt-subtype-user fpmt-subtype-prefix)
+                                          usermeta/v001
+                                          "UTF-8;q=1,ISO-8859-1;q=0"
+                                          "json"
+                                          "en-US"
+                                          :post
+                                          users-uri-template)
+                  (rtucore/header fphdr-establish-session "true")
+                  (mock/body (json/write-str user))
+                  (mock/content-type (rucore/content-type rumeta/mt-type
+                                                          (usermeta/mt-subtype-user fpmt-subtype-prefix)
+                                                          usermeta/v001
+                                                          "json"
+                                                          "UTF-8")))
+          resp (app req)]
+      (let [hdrs (:headers resp)
+            resp-body-stream (:body resp)
+            user-location-str (get hdrs "location")
+            resp-user-id-str (rtucore/last-url-part user-location-str)
+            pct (rucore/parse-media-type (get hdrs "Content-Type"))
+            charset (get rumeta/char-sets (:charset pct))
+            resp-user (rucore/read-res pct resp-body-stream charset)
+            auth-token (get hdrs fphdr-auth-token)
+            [loaded-user-id loaded-user] (usercore/load-user-by-authtoken db-spec
+                                                                          (Long. resp-user-id-str)
+                                                                          auth-token)]
+        ;; Create 1st vehicle
+        (let [vehicle {"fpvehicle/name" "Jeep"
+                       "fpvehicle/default-octane" 87}
+              vehicles-uri (str base-url
+                                entity-uri-prefix
+                                usermeta/pathcomp-users
+                                "/"
+                                resp-user-id-str
+                                "/"
+                                meta/pathcomp-vehicles)
+              req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                              (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                              meta/v001
+                                              "UTF-8;q=1,ISO-8859-1;q=0"
+                                              "json"
+                                              "en-US"
+                                              :post
+                                              vehicles-uri)
+                      (mock/body (json/write-str vehicle))
+                      (mock/content-type (rucore/content-type rumeta/mt-type
+                                                              (meta/mt-subtype-vehicle fpmt-subtype-prefix)
+                                                              meta/v001
+                                                              "json"
+                                                              "UTF-8"))
+                      (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                         fp-auth-scheme-param-name
+                                                                                         auth-token)))
+              resp (app req)
+              hdrs (:headers resp)
+              veh-location-str (get hdrs "location")
+              vehicle-id (rucore/entity-id-from-uri veh-location-str)]
+          (testing "status code" (is (= 201 (:status resp))))
+
+          ;; now we'll fetch the vehicle
+          (let [req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                meta/v001
+                                                "UTF-8;q=1,ISO-8859-1;q=0"
+                                                "json"
+                                                "en-US"
+                                                :get
+                                                veh-location-str)
+                        (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                meta/v001
+                                                                "json"
+                                                                "UTF-8"))
+                        (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                           fp-auth-scheme-param-name
+                                                                                           auth-token)))
+                resp (app req)]
+            (testing "status code" (is (= 200 (:status resp))))
+            (testing "body of fetched vehicle"
+              (let [hdrs (:headers resp)
+                    resp-body-stream (:body resp)]
+                (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
+                (is (not (nil? resp-body-stream)))
+                (let [pct (rucore/parse-media-type (get hdrs "Content-Type"))
+                      charset (get rumeta/char-sets (:charset pct))
+                      resp-veh (rucore/read-res pct resp-body-stream charset)]
+                  (is (not (nil? resp-veh)))
+                  (is (= "Jeep" (get resp-veh "fpvehicle/name")))
+                  (is (= 87 (get resp-veh "fpvehicle/default-octane"))))))))))))
