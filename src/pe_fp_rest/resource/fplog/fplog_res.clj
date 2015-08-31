@@ -105,6 +105,7 @@
                       body-data-out-transform-fn
                       load-fplog-fn
                       if-modified-since-hdr
+                      :fplog/updated-at
                       resp-gen-fn))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

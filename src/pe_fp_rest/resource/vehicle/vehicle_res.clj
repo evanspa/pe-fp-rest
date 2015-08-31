@@ -104,6 +104,7 @@
                       body-data-out-transform-fn
                       load-vehicle-fn
                       if-modified-since-hdr
+                      :fpvehicle/updated-at
                       resp-gen-fn))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

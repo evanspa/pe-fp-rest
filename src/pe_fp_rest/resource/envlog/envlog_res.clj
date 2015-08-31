@@ -105,6 +105,7 @@
                       body-data-out-transform-fn
                       load-envlog-fn
                       if-modified-since-hdr
+                      :envlog/updated-at
                       resp-gen-fn))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

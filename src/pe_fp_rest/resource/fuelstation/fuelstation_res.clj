@@ -105,6 +105,7 @@
                       body-data-out-transform-fn
                       load-fuelstation-fn
                       if-modified-since-hdr
+                      :fpfuelstation/updated-at
                       resp-gen-fn))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

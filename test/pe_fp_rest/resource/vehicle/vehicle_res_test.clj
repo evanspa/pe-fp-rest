@@ -578,12 +578,38 @@
             (testing "status code" (is (= 200 (:status resp))))
             (testing "body of fetched vehicle"
               (let [hdrs (:headers resp)
-                    resp-body-stream (:body resp)]
+                    resp-body-stream (:body resp)
+                    resp-body-stream (:body resp)
+                    pct (rucore/parse-media-type (get hdrs "Content-Type"))
+                    charset (get rumeta/char-sets (:charset pct))
+                    resp-veh (rucore/read-res pct resp-body-stream charset)]
                 (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
                 (is (not (nil? resp-body-stream)))
-                (let [pct (rucore/parse-media-type (get hdrs "Content-Type"))
-                      charset (get rumeta/char-sets (:charset pct))
-                      resp-veh (rucore/read-res pct resp-body-stream charset)]
-                  (is (not (nil? resp-veh)))
-                  (is (= "Jeep" (get resp-veh "fpvehicle/name")))
-                  (is (= 87 (get resp-veh "fpvehicle/default-octane"))))))))))))
+                (is (not (nil? resp-veh)))
+                (is (= "Jeep" (get resp-veh "fpvehicle/name")))
+                (is (= 87 (get resp-veh "fpvehicle/default-octane")))
+                ;; now we'll try again using a conditional GET
+                (let [req (-> (rtucore/req-w-std-hdrs rumeta/mt-type
+                                                      (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                      meta/v001
+                                                      "UTF-8;q=1,ISO-8859-1;q=0"
+                                                      "json"
+                                                      "en-US"
+                                                      :get
+                                                      veh-location-str)
+                              (mock/content-type (rucore/content-type rumeta/mt-type
+                                                                      (meta/mt-subtype-envlog fpmt-subtype-prefix)
+                                                                      meta/v001
+                                                                      "json"
+                                                                      "UTF-8"))
+                              (rtucore/header fphdr-if-modified-since (Long/toString (get resp-veh "fpvehicle/updated-at")))
+                              (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
+                                                                                                 fp-auth-scheme-param-name
+                                                                                                 auth-token)))
+                      resp (app req)]
+                  (testing "status code" (is (= 304 (:status resp))))
+                  (testing "body of fetched vehicle"
+                    (let [hdrs (:headers resp)
+                          resp-body-stream (:body resp)]
+                      (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
+                      (is (empty? resp-body-stream)))))))))))))
