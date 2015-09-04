@@ -45,16 +45,6 @@
                                            db-spec
                                            fixture-maker]]))
 
-(defn empty-embedded-resources-fn
-  [version
-   base-url
-   entity-uri-prefix
-   entity-uri
-   db-spec
-   accept-format-ind
-   user-id]
-  {})
-
 (defn empty-links-fn
   [version
    base-url
@@ -73,7 +63,7 @@
                           base-url
                           entity-uri-prefix
                           fphdr-establish-session
-                          empty-embedded-resources-fn
+                          nil
                           empty-links-fn))
   (ANY vehicles-uri-template
        [user-id]
@@ -86,7 +76,7 @@
                              base-url
                              entity-uri-prefix
                              (Long. user-id)
-                             empty-embedded-resources-fn
+                             nil
                              empty-links-fn))
   (ANY vehicle-uri-template
        [user-id vehicle-id]
@@ -100,7 +90,7 @@
                            entity-uri-prefix
                            (Long. user-id)
                            (Long. vehicle-id)
-                           empty-embedded-resources-fn
+                           nil
                            empty-links-fn
                            fphdr-if-unmodified-since
                            fphdr-if-modified-since))
@@ -115,7 +105,7 @@
                                base-url
                                entity-uri-prefix
                                (Long. user-id)
-                               empty-embedded-resources-fn
+                               nil
                                empty-links-fn)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -477,11 +467,6 @@
                                                 "en-US"
                                                 :delete
                                                 veh-location-str)
-                        (mock/content-type (rucore/content-type rumeta/mt-type
-                                                                (meta/mt-subtype-envlog fpmt-subtype-prefix)
-                                                                meta/v001
-                                                                "json"
-                                                                "UTF-8"))
                         (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
                                                                                            fp-auth-scheme-param-name
                                                                                            auth-token)))
@@ -597,11 +582,6 @@
                                                       "en-US"
                                                       :get
                                                       veh-location-str)
-                              (mock/content-type (rucore/content-type rumeta/mt-type
-                                                                      (meta/mt-subtype-envlog fpmt-subtype-prefix)
-                                                                      meta/v001
-                                                                      "json"
-                                                                      "UTF-8"))
                               (rtucore/header fphdr-if-modified-since (Long/toString (get resp-veh "fpvehicle/updated-at")))
                               (rtucore/header "Authorization" (rtucore/authorization-req-hdr-val fp-auth-scheme
                                                                                                  fp-auth-scheme-param-name

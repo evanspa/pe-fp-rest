@@ -8,6 +8,7 @@
             [pe-core-utils.core :as ucore]
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]
+            [pe-fp-rest.resource.vehicle.vehicle-utils :as vehresutils]
             [pe-fp-rest.resource.vehicle.vehicles-res :refer [new-vehicle-validator-fn
                                                               body-data-in-transform-fn
                                                               body-data-out-transform-fn
@@ -39,10 +40,7 @@
    entity-uri
    new-vehicle-id
    new-vehicle]
-  (-> new-vehicle
-      (ucore/transform-map-val :fpvehicle/created-at #(c/to-long %))
-      (ucore/transform-map-val :fpvehicle/deleted-at #(c/to-long %))
-      (ucore/transform-map-val :fpvehicle/updated-at #(c/to-long %))))
+  (vehresutils/vehicle-out-transform new-vehicle))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Next vehicle id function
@@ -50,7 +48,6 @@
 (defmethod next-vehicle-id-fn meta/v001
   [version db-spec]
   (fpcore/next-vehicle-id db-spec))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save new vehicle function

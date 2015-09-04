@@ -29,9 +29,7 @@
    user-id
    envlog-id
    envlog]
-  (-> envlog
-      (envlogresutils/envlog-data-in-transform)
-      (assoc :envlog/logged-at (c/from-long (Long. (:envlog/logged-at envlog))))))
+  (envlogresutils/envlog-in-transform envlog))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
@@ -42,12 +40,7 @@
    entity-uri-prefix
    entity-uri
    envlog]
-  (-> envlog
-      (envlogresutils/envlog-data-out-transform base-url entity-uri-prefix)
-      (ucore/transform-map-val :envlog/created-at #(c/to-long %))
-      (ucore/transform-map-val :envlog/deleted-at #(c/to-long %))
-      (ucore/transform-map-val :envlog/updated-at #(c/to-long %))
-      (ucore/transform-map-val :envlog/logged-at #(c/to-long %))))
+  (envlogresutils/envlog-out-transform envlog base-url entity-uri-prefix))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save envlog function

@@ -6,6 +6,7 @@
             [pe-core-utils.core :as ucore]
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]
+            [pe-fp-rest.resource.fuelstation.fuelstation-utils :as fsresutils]
             [pe-fp-rest.resource.fuelstation.fuelstation-res :refer [save-fuelstation-validator-fn
                                                                      body-data-in-transform-fn
                                                                      body-data-out-transform-fn
@@ -39,10 +40,7 @@
    entity-uri-prefix
    entity-uri
    fuelstation]
-  (-> fuelstation
-      (ucore/transform-map-val :fpfuelstation/created-at #(c/to-long %))
-      (ucore/transform-map-val :fpfuelstation/deleted-at #(c/to-long %))
-      (ucore/transform-map-val :fpfuelstation/updated-at #(c/to-long %))))
+  (fsresutils/fuelstation-out-transform fuelstation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save fuel station function

@@ -7,6 +7,7 @@
             [pe-user-rest.utils :as userresutils]
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]
+            [pe-fp-rest.resource.vehicle.vehicle-utils :as vehresutils]
             [pe-fp-rest.resource.vehicle.vehicle-res :refer [save-vehicle-validator-fn
                                                              body-data-in-transform-fn
                                                              body-data-out-transform-fn
@@ -40,10 +41,7 @@
    entity-uri-prefix
    entity-uri
    vehicle]
-  (-> vehicle
-      (ucore/transform-map-val :fpvehicle/created-at #(c/to-long %))
-      (ucore/transform-map-val :fpvehicle/deleted-at #(c/to-long %))
-      (ucore/transform-map-val :fpvehicle/updated-at #(c/to-long %))))
+  (vehresutils/vehicle-out-transform vehicle))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save vehicle function

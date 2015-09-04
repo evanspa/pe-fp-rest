@@ -29,9 +29,7 @@
    user-id
    fplog-entid
    fplog]
-  (-> fplog
-      (fplogresutils/fplog-data-in-transform)
-      (assoc :fplog/purchased-at (c/from-long (Long. (:fplog/purchased-at fplog))))))
+  (fplogresutils/fplog-in-transform fplog))
 
 (defmethod body-data-out-transform-fn meta/v001
   [version
@@ -42,12 +40,7 @@
    entity-uri-prefix
    entity-uri
    fplog]
-  (-> fplog
-      (fplogresutils/fplog-data-out-transform base-url entity-uri-prefix)
-      (ucore/transform-map-val :fplog/created-at #(c/to-long %))
-      (ucore/transform-map-val :fplog/deleted-at #(c/to-long %))
-      (ucore/transform-map-val :fplog/updated-at #(c/to-long %))
-      (ucore/transform-map-val :fplog/purchased-at #(c/to-long %))))
+  (fplogresutils/fplog-out-transform fplog base-url entity-uri-prefix))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 0.0.1 Save fplog function
