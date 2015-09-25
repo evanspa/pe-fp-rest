@@ -45,7 +45,12 @@
                                            envlogs-uri-template
                                            envlog-uri-template
                                            db-spec
-                                           fixture-maker]]))
+                                           fixture-maker
+                                           verification-email-mustache-template
+                                           verification-email-subject-line
+                                           verification-email-from
+                                           verification-url-maker
+                                           flagged-url-maker]]))
 
 (defn empty-embedded-resources-fn
   [version
@@ -76,7 +81,12 @@
                           entity-uri-prefix
                           fphdr-establish-session
                           empty-embedded-resources-fn
-                          empty-links-fn))
+                          empty-links-fn
+                          verification-email-mustache-template
+                          verification-email-subject-line
+                          verification-email-from
+                          verification-url-maker
+                          flagged-url-maker))
   (ANY vehicles-uri-template
        [user-id]
        (vehsres/vehicles-res db-spec

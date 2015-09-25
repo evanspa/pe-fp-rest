@@ -4,6 +4,7 @@
             [pe-user-core.ddl :as uddl]
             [pe-fp-core.ddl :as fpddl]
             [clojure.java.jdbc :as j]
+            [clojurewerkz.mailer.core :refer [delivery-mode!]]
             [pe-rest-utils.core :as rucore]
             [pe-jdbc-utils.core :as jcore]
             [pe-rest-utils.meta :as rumeta]))
@@ -36,6 +37,23 @@
 (def entity-uri-prefix "/testing/")
 (def fphdr-establish-session "fp-establish-session")
 
+(def verification-email-mustache-template "email/templates/testing.html.mustache")
+(def verification-email-subject-line "testing subject")
+(def verification-email-from "testing@example.com")
+
+(defn verification-url-maker
+  [user-id verification-token]
+  (str base-url entity-uri-prefix usermeta/pathcomp-users user-id "/" usermeta/pathcomp-verification "/" verification-token))
+
+(defn flagged-url-maker
+  [user-id verification-token]
+  (str base-url entity-uri-prefix usermeta/pathcomp-users user-id "/" usermeta/pathcomp-flagged "/" verification-token))
+
+(def veri-verified-mustache-template "web/templates/testing.account-verified.html.mustache")
+(def veri-error-mustache-template "web/templates/testing.verification-error.html.mustache")
+
+(delivery-mode! :test)
+
 (defn fixture-maker
   []
   (fn [f]
@@ -54,7 +72,8 @@
                       uddl/v1-user-add-deleted-reason-col
                       uddl/v1-user-add-suspended-at-col
                       uddl/v1-user-add-suspended-reason-col
-                      uddl/v1-user-add-suspended-count-col)
+                      uddl/v1-user-add-suspended-count-col
+                      uddl/v2-create-email-verification-token-ddl)
     (jcore/with-try-catch-exec-as-query db-spec
       (uddl/v0-create-updated-count-inc-trigger-fn db-spec))
     (jcore/with-try-catch-exec-as-query db-spec

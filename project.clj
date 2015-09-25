@@ -16,13 +16,13 @@
                  [clj-time "0.8.0"]
                  [pe-core-utils "0.0.11"]
                  [pe-jdbc-utils "0.0.16"]
-                 [pe-user-core "0.1.28"]
+                 [pe-user-core "0.1.30"]
                  [pe-rest-utils "0.0.30"]
-                 [pe-user-rest "0.0.37"]
+                 [pe-user-rest "0.0.39"]
                  [pe-fp-core "0.0.19"]]
   :resource-paths ["resources"]
   :codox {:exclude [user]
-          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.23/"
+          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.24/"
           :src-linenum-anchor-prefix "L"}
   :profiles {:dev {:source-paths ["dev"]  ;ensures 'user.clj' gets auto-loaded
                    :plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]
@@ -33,6 +33,8 @@
                                   [org.clojure/tools.nrepl "0.2.7"]
                                   [org.clojure/data.json "0.2.5"]
                                   [pe-rest-testutils "0.0.7"]
+                                  [clojurewerkz/mailer "1.2.0"]
+                                  [de.ubercode.clostache/clostache "1.4.0"]
                                   [org.postgresql/postgresql "9.4-1201-jdbc41"]
                                   [ring-server "0.3.1"]
                                   [ring-mock "0.1.5"]]}

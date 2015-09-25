@@ -39,7 +39,12 @@
                                            fuelstations-uri-template
                                            fuelstation-uri-template
                                            db-spec
-                                           fixture-maker]]))
+                                           fixture-maker
+                                           verification-email-mustache-template
+                                           verification-email-subject-line
+                                           verification-email-from
+                                           verification-url-maker
+                                           flagged-url-maker]]))
 (defn empty-embedded-resources-fn
   [version
    base-url
@@ -69,7 +74,12 @@
                           entity-uri-prefix
                           fphdr-establish-session
                           empty-embedded-resources-fn
-                          empty-links-fn))
+                          empty-links-fn
+                          verification-email-mustache-template
+                          verification-email-subject-line
+                          verification-email-from
+                          verification-url-maker
+                          flagged-url-maker))
   (ANY fuelstations-uri-template
        [user-id]
        (fssres/fuelstations-res db-spec
