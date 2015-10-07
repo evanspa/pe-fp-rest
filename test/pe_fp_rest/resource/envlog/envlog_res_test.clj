@@ -8,8 +8,6 @@
             [ring.middleware.cookies :refer [wrap-cookies]]
             [compojure.handler :as handler]
             [ring.mock.request :as mock]
-            [pe-user-rest.resource.users-res :as userres]
-            [pe-user-rest.resource.version.users-res-v001]
             [pe-fp-rest.resource.vehicle.vehicles-res :as vehsres]
             [pe-fp-rest.resource.vehicle.version.vehicles-res-v001]
             [pe-fp-rest.resource.fuelstation.fuelstations-res :as fssres]
@@ -46,47 +44,12 @@
                                            envlog-uri-template
                                            db-spec
                                            fixture-maker
-                                           verification-email-mustache-template
-                                           verification-email-subject-line
-                                           verification-email-from
-                                           verification-url-maker
-                                           verification-flagged-url-maker]]))
-
-(defn empty-embedded-resources-fn
-  [version
-   base-url
-   entity-uri-prefix
-   entity-uri
-   conn
-   accept-format-ind
-   user-id]
-  {})
-
-(defn empty-links-fn
-  [version
-   base-url
-   entity-uri-prefix
-   entity-uri
-   user-id]
-  {})
+                                           users-route
+                                           empty-embedded-resources-fn
+                                           empty-links-fn]]))
 
 (defroutes routes
-  (ANY users-uri-template
-       []
-       (userres/users-res db-spec
-                          fpmt-subtype-prefix
-                          fphdr-auth-token
-                          fphdr-error-mask
-                          base-url
-                          entity-uri-prefix
-                          fphdr-establish-session
-                          empty-embedded-resources-fn
-                          empty-links-fn
-                          verification-email-mustache-template
-                          verification-email-subject-line
-                          verification-email-from
-                          verification-url-maker
-                          verification-flagged-url-maker))
+  users-route
   (ANY vehicles-uri-template
        [user-id]
        (vehsres/vehicles-res db-spec
