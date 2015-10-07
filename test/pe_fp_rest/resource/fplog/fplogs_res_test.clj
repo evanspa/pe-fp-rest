@@ -48,7 +48,7 @@
                                            verification-email-subject-line
                                            verification-email-from
                                            verification-url-maker
-                                           flagged-url-maker]]))
+                                           verification-flagged-url-maker]]))
 
 (defn empty-embedded-resources-fn
   [version
@@ -84,7 +84,7 @@
                           verification-email-subject-line
                           verification-email-from
                           verification-url-maker
-                          flagged-url-maker))
+                          verification-flagged-url-maker))
   (ANY vehicles-uri-template
        [user-id]
        (vehsres/vehicles-res db-spec

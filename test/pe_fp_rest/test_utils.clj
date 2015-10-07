@@ -45,9 +45,9 @@
   [user-id verification-token]
   (str base-url entity-uri-prefix usermeta/pathcomp-users user-id "/" usermeta/pathcomp-verification "/" verification-token))
 
-(defn flagged-url-maker
+(defn verification-flagged-url-maker
   [user-id verification-token]
-  (str base-url entity-uri-prefix usermeta/pathcomp-users user-id "/" usermeta/pathcomp-flagged "/" verification-token))
+  (str base-url entity-uri-prefix usermeta/pathcomp-users user-id "/" usermeta/pathcomp-verification-flagged "/" verification-token))
 
 (def veri-verified-mustache-template "web/templates/testing.account-verified.html.mustache")
 (def veri-error-mustache-template "web/templates/testing.verification-error.html.mustache")

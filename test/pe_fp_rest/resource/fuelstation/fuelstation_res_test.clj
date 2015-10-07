@@ -44,7 +44,7 @@
                                            verification-email-subject-line
                                            verification-email-from
                                            verification-url-maker
-                                           flagged-url-maker]]))
+                                           verification-flagged-url-maker]]))
 (defn empty-embedded-resources-fn
   [version
    base-url
@@ -79,7 +79,7 @@
                           verification-email-subject-line
                           verification-email-from
                           verification-url-maker
-                          flagged-url-maker))
+                          verification-flagged-url-maker))
   (ANY fuelstations-uri-template
        [user-id]
        (fssres/fuelstations-res db-spec
