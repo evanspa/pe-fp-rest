@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/evanspa/pe-fp-rest.svg)](https://travis-ci.org/evanspa/pe-fp-rest)
 
-A Clojure library providing REST API functionality for the fuel purchase system.
+A Clojure library providing REST API functionality for the Gas Jot system.
 
 pe-fp-rest exposes the functionality of
 [pe-fp-core](https://github.com/evanspa/pe-fp-core) as a REST API using
@@ -11,7 +11,7 @@ pe-fp-rest exposes the functionality of
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
-- [About the Fuel Purchase System](#about-the-fuel-purchase-system)
+- [About the Gas Jot System](#about-the-gas-jot-system)
   - [Client Applications](#client-applications)
   - [Server Application](#server-application)
 - [Documentation](#documentation)
@@ -20,18 +20,15 @@ pe-fp-rest exposes the functionality of
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## About the Fuel Purchase System
+## About the Gas Jot System
 
-The fuel purchase system provides the ability to record and analyze your
-vehicle's fuel usage.  It currently consists of an iOS (iPhone) application, as
+The Gas Jot system provides the ability to record and analyze your
+vehicle's gas usage.  It currently consists of an iOS (iPhone) application, as
 well as a server-side REST application (*which the iOS app communicates with*).
-In its present form, the fuel purchase system is not terribly useful.  It
-enables you to collect fuel usage statistics with respect to your vehicles, but
-none of the analysis / reporting functionality is built out yet.
 
 ### Client Applications
 
-Currently there only exists an iOS application for the fuel purchase system: [PEFuelPurchase-App](https://github.com/evanspa/PEFuelPurchase-App).
+Currently there only exists an iOS application for the Gas Jot system: [PEFuelPurchase-App](https://github.com/evanspa/PEFuelPurchase-App).
 
 ### Server Application
 
