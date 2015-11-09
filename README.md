@@ -1,11 +1,11 @@
-# pe-fp-rest
+# pe-gasjot-rest
 
-[![Build Status](https://travis-ci.org/evanspa/pe-fp-rest.svg)](https://travis-ci.org/evanspa/pe-fp-rest)
+[![Build Status](https://travis-ci.org/evanspa/pe-gasjot-rest.svg)](https://travis-ci.org/evanspa/pe-gasjot-rest)
 
 A Clojure library providing REST API functionality for the Gas Jot system.
 
-pe-fp-rest exposes the functionality of
-[pe-fp-core](https://github.com/evanspa/pe-fp-core) as a REST API using
+pe-gasjot-rest exposes the functionality of
+[pe-gasjot-core](https://github.com/evanspa/pe-gasjot-core) as a REST API using
 [Liberator](http://clojure-liberator.github.io/liberator/).
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -28,21 +28,22 @@ well as a server-side REST application (*which the iOS app communicates with*).
 
 ### Client Applications
 
-Currently there only exists an iOS application for the Gas Jot system: [PEFuelPurchase-App](https://github.com/evanspa/PEFuelPurchase-App).
+Currently there only exists an iOS application for the Gas Jot system:
+[Gas Jot iOS App](https://github.com/evanspa/GasJot-ios).
 
 ### Server Application
 
-The server-side REST application is implemented using Clojure: [pe-fp-app](https://github.com/evanspa/pe-fp-app).  This repository, *pe-fp-rest*, is used by it.
+The server-side REST application is implemented using Clojure: [pe-gasjot-app](https://github.com/evanspa/pe-gasjot-app).  This repository, *pe-gasjot-rest*, is used by it.
 
-pe-fp-rest makes use of the [pe-* Clojure library suite](#pe--clojure-library-suite).
+pe-gasjot-rest makes use of the [pe-* Clojure library suite](#pe--clojure-library-suite).
 
 ## Documentation
 
-* [API Docs](http://evanspa.github.com/pe-fp-rest)
+* [API Docs](http://evanspa.github.com/pe-gasjot-rest)
 
 ## Installation
 
-pe-fp-rest is available from Clojars.  Add the following dependency to your
+pe-gasjot-rest is available from Clojars.  Add the following dependency to your
 `project.clj` file:
 
 ```
