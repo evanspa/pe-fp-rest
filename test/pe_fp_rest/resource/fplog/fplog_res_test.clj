@@ -46,7 +46,11 @@
                                            fixture-maker
                                            users-route
                                            empty-embedded-resources-fn
-                                           empty-links-fn]]))
+                                           empty-links-fn
+                                           err-notification-mustache-template
+                                           err-subject
+                                           err-from-email
+                                           err-to-email]]))
 
 (defroutes routes
   users-route
@@ -62,7 +66,11 @@
                              entity-uri-prefix
                              (Long. user-id)
                              empty-embedded-resources-fn
-                             empty-links-fn))
+                             empty-links-fn
+                             err-notification-mustache-template
+                             err-subject
+                             err-from-email
+                             err-to-email))
   (ANY fuelstations-uri-template
        [user-id]
        (fssres/fuelstations-res db-spec
@@ -75,7 +83,11 @@
                                 entity-uri-prefix
                                 (Long. user-id)
                                 empty-embedded-resources-fn
-                                empty-links-fn))
+                                empty-links-fn
+                                err-notification-mustache-template
+                                err-subject
+                                err-from-email
+                                err-to-email))
   (ANY fplogs-uri-template
        [user-id]
        (fplogsres/fplogs-res db-spec
@@ -88,7 +100,11 @@
                              entity-uri-prefix
                              (Long. user-id)
                              empty-embedded-resources-fn
-                             empty-links-fn))
+                             empty-links-fn
+                             err-notification-mustache-template
+                             err-subject
+                             err-from-email
+                             err-to-email))
   (ANY fplog-uri-template
        [user-id fplog-id]
        (fplogres/fplog-res db-spec
@@ -104,7 +120,11 @@
                            empty-embedded-resources-fn
                            empty-links-fn
                            fphdr-if-unmodified-since
-                           fphdr-if-modified-since)))
+                           fphdr-if-modified-since
+                           err-notification-mustache-template
+                           err-subject
+                           err-from-email
+                           err-to-email)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Middleware-decorated app

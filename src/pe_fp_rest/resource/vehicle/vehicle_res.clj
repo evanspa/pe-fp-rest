@@ -6,6 +6,7 @@
             [pe-rest-utils.core :as rucore]
             [pe-rest-utils.meta :as rumeta]
             [pe-user-rest.utils :as userresutils]
+            [pe-user-core.core :as usercore]
             [pe-fp-core.core :as fpcore]
             [pe-fp-core.validation :as fpval]))
 
@@ -30,7 +31,11 @@
    plaintext-auth-token
    embedded-resources-fn
    links-fn
-   if-unmodified-since-hdr]
+   if-unmodified-since-hdr
+   err-notification-mustache-template
+   err-subject
+   err-from-email
+   err-to-email]
   (rucore/put-or-post-invoker ctx
                               :put
                               db-spec
@@ -45,13 +50,20 @@
                               fpval/sv-any-issues
                               body-data-in-transform-fn
                               body-data-out-transform-fn
-                              nil
-                              nil
+                              nil ; next-entity-id-fn
+                              nil ; save-new-entity-fn
                               save-vehicle-fn
-                              nil
-                              nil
-                              nil
-                              if-unmodified-since-hdr))
+                              nil ; hdr-establish-session
+                              nil ; make-session-fn
+                              nil ; post-as-do-fn
+                              if-unmodified-since-hdr
+                              (fn [exc-and-params]
+                                (usercore/send-email err-notification-mustache-template
+                                                     exc-and-params
+                                                     err-subject
+                                                     err-from-email
+                                                     err-to-email))
+                              #(identity %)))
 
 (defn handle-vehicle-delete!
   [ctx
@@ -64,7 +76,11 @@
    plaintext-auth-token
    embedded-resources-fn
    links-fn
-   if-unmodified-since-hdr]
+   if-unmodified-since-hdr
+   err-notification-mustache-template
+   err-subject
+   err-from-email
+   err-to-email]
   (rucore/delete-invoker ctx
                          db-spec
                          base-url
@@ -76,8 +92,14 @@
                          plaintext-auth-token
                          body-data-out-transform-fn
                          delete-vehicle-fn
-                         nil
-                         if-unmodified-since-hdr))
+                         nil ; delete-reason-hdr
+                         if-unmodified-since-hdr
+                         (fn [exc-and-params]
+                           (usercore/send-email err-notification-mustache-template
+                                                exc-and-params
+                                                err-subject
+                                                err-from-email
+                                                err-to-email))))
 
 (defn handle-vehicle-get
   [ctx
@@ -91,7 +113,11 @@
    embedded-resources-fn
    links-fn
    if-modified-since-hdr
-   resp-gen-fn]
+   resp-gen-fn
+   err-notification-mustache-template
+   err-subject
+   err-from-email
+   err-to-email]
   (rucore/get-invoker ctx
                       db-spec
                       base-url
@@ -105,7 +131,13 @@
                       load-vehicle-fn
                       if-modified-since-hdr
                       :fpvehicle/updated-at
-                      resp-gen-fn))
+                      resp-gen-fn
+                      (fn [exc-and-params]
+                        (usercore/send-email err-notification-mustache-template
+                                             exc-and-params
+                                             err-subject
+                                             err-from-email
+                                             err-to-email))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Validator function
@@ -150,7 +182,11 @@
    embedded-resources-fn
    links-fn
    if-unmodified-since-hdr
-   if-modified-since-hdr]
+   if-modified-since-hdr
+   err-notification-mustache-template
+   err-subject
+   err-from-email
+   err-to-email]
   :available-media-types (rucore/enumerate-media-types (meta/supported-media-types mt-subtype-prefix))
   :available-charsets rumeta/supported-char-sets
   :available-languages rumeta/supported-languages
@@ -178,7 +214,11 @@
                                                                       auth-scheme-param-name)
                                embedded-resources-fn
                                links-fn
-                               if-unmodified-since-hdr))
+                               if-unmodified-since-hdr
+                               err-notification-mustache-template
+                               err-subject
+                               err-from-email
+                               err-to-email))
   :delete! (fn [ctx]
              (handle-vehicle-delete! ctx
                                      db-spec
@@ -192,7 +232,11 @@
                                                                             auth-scheme-param-name)
                                      embedded-resources-fn
                                      links-fn
-                                     if-unmodified-since-hdr))
+                                     if-unmodified-since-hdr
+                                     err-notification-mustache-template
+                                     err-subject
+                                     err-from-email
+                                     err-to-email))
   :handle-ok (fn [ctx]
                (if (= (get-in ctx [:request :request-method]) :get)
                  (handle-vehicle-get ctx
@@ -208,5 +252,9 @@
                                      embedded-resources-fn
                                      links-fn
                                      if-modified-since-hdr
-                                     #(rucore/handle-resp % hdr-auth-token hdr-error-mask))
+                                     #(rucore/handle-resp % hdr-auth-token hdr-error-mask)
+                                     err-notification-mustache-template
+                                     err-subject
+                                     err-from-email
+                                     err-to-email)
                  (rucore/handle-resp ctx hdr-auth-token hdr-error-mask))))

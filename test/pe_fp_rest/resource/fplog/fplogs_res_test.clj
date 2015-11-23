@@ -44,7 +44,11 @@
                                            fixture-maker
                                            users-route
                                            empty-embedded-resources-fn
-                                           empty-links-fn]]))
+                                           empty-links-fn
+                                           err-notification-mustache-template
+                                           err-subject
+                                           err-from-email
+                                           err-to-email]]))
 
 (defroutes routes
   users-route
@@ -60,7 +64,11 @@
                              entity-uri-prefix
                              (Long. user-id)
                              empty-embedded-resources-fn
-                             empty-links-fn))
+                             empty-links-fn
+                             err-notification-mustache-template
+                             err-subject
+                             err-from-email
+                             err-to-email))
   (ANY fuelstations-uri-template
        [user-id]
        (fssres/fuelstations-res db-spec
@@ -73,7 +81,11 @@
                                 entity-uri-prefix
                                 (Long. user-id)
                                 empty-embedded-resources-fn
-                                empty-links-fn))
+                                empty-links-fn
+                                err-notification-mustache-template
+                                err-subject
+                                err-from-email
+                                err-to-email))
   (ANY fplogs-uri-template
        [user-id]
        (fplogsres/fplogs-res db-spec
@@ -86,7 +98,11 @@
                              entity-uri-prefix
                              (Long. user-id)
                              empty-embedded-resources-fn
-                             empty-links-fn)))
+                             empty-links-fn
+                             err-notification-mustache-template
+                             err-subject
+                             err-from-email
+                             err-to-email)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Middleware-decorated app

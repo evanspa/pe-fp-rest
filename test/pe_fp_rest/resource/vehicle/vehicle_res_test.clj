@@ -44,7 +44,11 @@
                                            fixture-maker
                                            users-route
                                            empty-embedded-resources-fn
-                                           empty-links-fn]]))
+                                           empty-links-fn
+                                           err-notification-mustache-template
+                                           err-subject
+                                           err-from-email
+                                           err-to-email]]))
 
 (defroutes routes
   users-route
@@ -60,7 +64,11 @@
                              entity-uri-prefix
                              (Long. user-id)
                              nil
-                             empty-links-fn))
+                             empty-links-fn
+                             err-notification-mustache-template
+                             err-subject
+                             err-from-email
+                             err-to-email))
   (ANY vehicle-uri-template
        [user-id vehicle-id]
        (vehres/vehicle-res db-spec
@@ -76,7 +84,11 @@
                            nil
                            empty-links-fn
                            fphdr-if-unmodified-since
-                           fphdr-if-modified-since))
+                           fphdr-if-modified-since
+                           err-notification-mustache-template
+                           err-subject
+                           err-from-email
+                           err-to-email))
   (ANY envlogs-uri-template
        [user-id]
        (envlogsres/envlogs-res db-spec
@@ -89,7 +101,11 @@
                                entity-uri-prefix
                                (Long. user-id)
                                nil
-                               empty-links-fn)))
+                               empty-links-fn
+                               err-notification-mustache-template
+                               err-subject
+                               err-from-email
+                               err-to-email)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Middleware-decorated app

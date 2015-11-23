@@ -41,10 +41,20 @@
 (def entity-uri-prefix "/testing/")
 (def fphdr-establish-session "fp-establish-session")
 
+(def err-notification-mustache-template "email/templates/err-notification.html.mustache")
+(def err-subject "Error!")
+(def err-from-email "errors@example.com")
+(def err-to-email "evansp2@gmail.com")
+
 (def welcome-and-verification-email-mustache-template "email/templates/welcome-and-account-verification.html.mustache")
 (def verification-email-mustache-template "email/templates/account-verification.html.mustache")
 (def welcome-and-verification-email-subject-line "welcome and account verification")
 (def welcome-and-verification-email-from "welcome@example.com")
+
+(def new-user-notification-mustache-template "email/templates/new-signup-notification.html.mustache")
+(def new-user-notification-from-email "alerts@example.com")
+(def new-user-notification-to-email "evansp2@gmail.com")
+(def new-user-notification-subject "New sign-up!")
 
 (defn verification-url-maker
   [email verification-token]
@@ -241,4 +251,12 @@
                           welcome-and-verification-email-subject-line
                           welcome-and-verification-email-from
                           verification-url-maker
-                          verification-flagged-url-maker)))
+                          verification-flagged-url-maker
+                          new-user-notification-mustache-template
+                          new-user-notification-from-email
+                          new-user-notification-to-email
+                          new-user-notification-subject
+                          err-notification-mustache-template
+                          err-subject
+                          err-from-email
+                          err-to-email)))

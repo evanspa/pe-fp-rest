@@ -38,7 +38,11 @@
                                            fixture-maker
                                            users-route
                                            empty-embedded-resources-fn
-                                           empty-links-fn]]))
+                                           empty-links-fn
+                                           err-notification-mustache-template
+                                           err-subject
+                                           err-from-email
+                                           err-to-email]]))
 
 (defroutes routes
   users-route
@@ -54,7 +58,11 @@
                                 entity-uri-prefix
                                 (Long. user-id)
                                 empty-embedded-resources-fn
-                                empty-links-fn)))
+                                empty-links-fn
+                                err-notification-mustache-template
+                                err-subject
+                                err-from-email
+                                err-to-email)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Middleware-decorated app

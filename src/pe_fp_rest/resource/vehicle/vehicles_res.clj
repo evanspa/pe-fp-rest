@@ -30,7 +30,11 @@
    user-id
    plaintext-auth-token
    embedded-resources-fn
-   links-fn]
+   links-fn
+   err-notification-mustache-template
+   err-subject
+   err-from-email
+   err-to-email]
   (rucore/put-or-post-invoker ctx
                               :post-as-create
                               db-spec
@@ -47,11 +51,18 @@
                               body-data-out-transform-fn
                               next-vehicle-id-fn
                               save-new-vehicle-fn
-                              nil
-                              nil
-                              nil
-                              nil
-                              nil))
+                              nil ; save-entity-fn
+                              nil ; hdr-establish-session
+                              nil ; make-session-fn
+                              nil ; post-as-do-fn
+                              nil ; if-unmodified-since-hdr
+                              (fn [exc-and-params]
+                                (usercore/send-email err-notification-mustache-template
+                                                     exc-and-params
+                                                     err-subject
+                                                     err-from-email
+                                                     err-to-email))
+                              #(identity %)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Validator function
@@ -88,7 +99,11 @@
    entity-uri-prefix
    user-id
    embedded-resources-fn
-   links-fn]
+   links-fn
+   err-notification-mustache-template
+   err-subject
+   err-from-email
+   err-to-email]
   :available-media-types (rucore/enumerate-media-types (meta/supported-media-types mt-subtype-prefix))
   :available-charsets rumeta/supported-char-sets
   :available-languages rumeta/supported-languages
@@ -109,7 +124,11 @@
                                                                                  auth-scheme
                                                                                  auth-scheme-param-name)
                                           embedded-resources-fn
-                                          links-fn))
+                                          links-fn
+                                          err-notification-mustache-template
+                                          err-subject
+                                          err-from-email
+                                          err-to-email))
   :handle-created (fn [ctx] (rucore/handle-resp ctx
                                                 hdr-auth-token
                                                 hdr-error-mask)))

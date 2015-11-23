@@ -40,7 +40,11 @@
                                            fixture-maker
                                            users-route
                                            empty-embedded-resources-fn
-                                           empty-links-fn]]))
+                                           empty-links-fn
+                                           err-notification-mustache-template
+                                           err-subject
+                                           err-from-email
+                                           err-to-email]]))
 
 (defroutes routes
   users-route
@@ -56,7 +60,11 @@
                                 entity-uri-prefix
                                 (Long. user-id)
                                 empty-embedded-resources-fn
-                                empty-links-fn))
+                                empty-links-fn
+                                err-notification-mustache-template
+                                err-subject
+                                err-from-email
+                                err-to-email))
   (ANY fuelstation-uri-template
        [user-id fuelstation-id]
        (fsres/fuelstation-res db-spec
@@ -72,7 +80,11 @@
                               empty-embedded-resources-fn
                               empty-links-fn
                               fphdr-if-unmodified-since
-                              fphdr-if-modified-since)))
+                              fphdr-if-modified-since
+                              err-notification-mustache-template
+                              err-subject
+                              err-from-email
+                              err-to-email)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Middleware-decorated app
