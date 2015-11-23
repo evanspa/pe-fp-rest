@@ -15,14 +15,14 @@
                  [org.slf4j/slf4j-api "1.7.5"]
                  [clj-time "0.8.0"]
                  [pe-core-utils "0.0.11"]
-                 [pe-jdbc-utils "0.0.16"]
-                 [pe-user-core "0.1.35"]
-                 [pe-rest-utils "0.0.30"]
-                 [pe-user-rest "0.0.49"]
-                 [pe-fp-core "0.0.23"]]
+                 [pe-jdbc-utils "0.0.18"]
+                 [pe-user-core "0.1.38"]
+                 [pe-rest-utils "0.0.33"]
+                 [pe-user-rest "0.0.50"]
+                 [pe-fp-core "0.0.28"]]
   :resource-paths ["resources"]
   :codox {:exclude [user]
-          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.30/"
+          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.31/"
           :src-linenum-anchor-prefix "L"}
   :profiles {:dev {:source-paths ["dev"]  ;ensures 'user.clj' gets auto-loaded
                    :plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]
