@@ -309,7 +309,6 @@
                 charset (get rumeta/char-sets (:charset pct))
                 price-stream (rucore/read-res pct resp-body-stream charset)]
             (is (not (nil? price-stream)))
-            (log/debug "price-stream: " price-stream)
             (let [price-events (get price-stream "price-event-stream")]
               (is (= 3 (count price-events)))
               (let [[event-1 event-2 event-3] price-events]
