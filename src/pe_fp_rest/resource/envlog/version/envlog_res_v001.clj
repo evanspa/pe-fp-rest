@@ -75,7 +75,8 @@
 ;; 0.0.1 Load envlog function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod load-envlog-fn meta/v001
-  [version
+  [ctx
+   version
    db-spec
    user-id
    envlog-id

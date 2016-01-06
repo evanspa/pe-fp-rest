@@ -78,7 +78,8 @@
 ;; 0.0.1 Load vehicle function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod load-vehicle-fn meta/v001
-  [version
+  [ctx
+   version
    db-spec
    user-id
    vehicle-id

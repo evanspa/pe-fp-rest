@@ -14,15 +14,16 @@
                  [ch.qos.logback/logback-classic "1.0.13"]
                  [org.slf4j/slf4j-api "1.7.5"]
                  [clj-time "0.8.0"]
+                 [org.postgis/postgis-jdbc "1.3.3"]
                  [pe-core-utils "0.0.11"]
                  [pe-jdbc-utils "0.0.18"]
                  [pe-user-core "0.1.38"]
-                 [pe-rest-utils "0.0.34"]
-                 [pe-user-rest "0.0.51"]
-                 [pe-fp-core "0.0.28"]]
+                 [pe-rest-utils "0.0.35"]
+                 [pe-user-rest "0.0.52"]
+                 [pe-fp-core "0.0.40"]]
   :resource-paths ["resources"]
   :codox {:exclude [user]
-          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.32/"
+          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.33/"
           :src-linenum-anchor-prefix "L"}
   :profiles {:dev {:source-paths ["dev"]  ;ensures 'user.clj' gets auto-loaded
                    :plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]
@@ -36,6 +37,7 @@
                                   [clojurewerkz/mailer "1.2.0"]
                                   [de.ubercode.clostache/clostache "1.4.0"]
                                   [org.postgresql/postgresql "9.4-1201-jdbc41"]
+                                  [org.postgis/postgis-jdbc "1.3.3"]
                                   [ring/ring-codec "1.0.0"]
                                   [ring-server "0.3.1"]
                                   [ring-mock "0.1.5"]]}

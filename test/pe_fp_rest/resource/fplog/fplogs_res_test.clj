@@ -305,6 +305,7 @@
                                              "fplog/car-wash-per-gal-discount" 0.08
                                              "fplog/num-gallons" 14.3
                                              "fplog/octane" 87
+                                             "fplog/odometer" 15891
                                              "fplog/gallon-price" 2.29}
                                       fplogs-uri (str base-url
                                                       entity-uri-prefix

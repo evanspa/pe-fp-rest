@@ -75,7 +75,8 @@
 ;; 0.0.1 Load fplog function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod load-fplog-fn meta/v001
-  [version
+  [ctx
+   version
    db-spec
    user-id
    fplog-id

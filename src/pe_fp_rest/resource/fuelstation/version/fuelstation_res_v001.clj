@@ -75,7 +75,8 @@
 ;; 0.0.1 Load fuelstation function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defmethod load-fuelstation-fn meta/v001
-  [version
+  [ctx
+   version
    db-spec
    user-id
    fuelstation-id

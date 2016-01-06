@@ -14,4 +14,6 @@
       (ucore/transform-map-val :fpfuelstation/deleted-at #(c/to-long %))
       (ucore/transform-map-val :fpfuelstation/updated-at #(c/to-long %))
       (dissoc :fpfuelstation/user-id)
+      (dissoc :fpfuelstation/location)
+      (dissoc :location)
       (dissoc :fpfuelstation/updated-count)))
