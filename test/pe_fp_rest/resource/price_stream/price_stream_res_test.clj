@@ -290,9 +290,9 @@
           (new-fplog fs-ca-location-str t1 4.99 87)
           (new-fplog fs-tx-location-str t1 2.19 87)
           (new-fplog fs-ny-location-str t1 3.39 87))
-        (let [price-stream-filter {"price-stream-filter/latitude" 42.814
-                                   "price-stream-filter/longitude" -73.939
-                                   "price-stream-filter/distance-within" 10000000
+        (let [price-stream-filter {"price-stream-filter/fs-latitude" 42.814
+                                   "price-stream-filter/fs-longitude" -73.939
+                                   "price-stream-filter/fs-distance-within" 10000000
                                    "price-stream-filter/max-results" 20
                                    "price-stream-filter/sort-by" [["f.gallon_price" "asc"] ["distance" "asc"] ["f.purchased_at" "desc"]]}
               price-stream-uri (str base-url entity-uri-prefix meta/pathcomp-price-stream)
@@ -315,8 +315,8 @@
                 (is (= 2.19 (get event-1 "price-event/price")))
                 (is (= 87 (get event-1 "price-event/octane")))
                 (is (= false (get event-1 "price-event/is-diesel")))
-                (is (= 29.760 (get event-1 "price-event/latitude")))
-                (is (= -95.369803 (get event-1 "price-event/longitude")))
+                (is (= 29.760 (get event-1 "price-event/fs-latitude")))
+                (is (= -95.369803 (get event-1 "price-event/fs-longitude")))
 
                 (is (= 3.39 (get event-2 "price-event/price")))
                 (is (= 4.99 (get event-3 "price-event/price")))))))))))

@@ -53,9 +53,9 @@
         contains-price-events-after (contains? filter-criteria :price-stream-filter/price-events-after)
         contains-sort-by-fields (contains? filter-criteria :price-stream-filter/sort-by)
         contains-max-results (contains? filter-criteria :price-stream-filter/max-results)
-        latitude (:price-stream-filter/latitude filter-criteria)
-        longitude (:price-stream-filter/longitude filter-criteria)
-        distance-within (:price-stream-filter/distance-within filter-criteria)
+        latitude (:price-stream-filter/fs-latitude filter-criteria)
+        longitude (:price-stream-filter/fs-longitude filter-criteria)
+        distance-within (:price-stream-filter/fs-distance-within filter-criteria)
         price-events-after (:price-stream-filter/price-events-after filter-criteria)
         sort-by-fields (:price-stream-filter/sort-by filter-criteria)
         max-results (:price-stream-filter/max-results filter-criteria)]
