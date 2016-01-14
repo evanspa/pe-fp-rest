@@ -1,4 +1,4 @@
-(defproject pe-fp-rest "0.0.37"
+(defproject pe-fp-rest "0.0.38-SNAPSHOT"
   :description "A Clojure library providing a REST API interface on top of the fuel purchase abstractions."
   :url "https://github.com/evanspa/pe-fp-rest"
   :license {:name "MIT"
