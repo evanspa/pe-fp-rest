@@ -46,7 +46,8 @@
    auth-token
    filter-criteria
    merge-embedded-fn
-   merge-links-fn]
+   merge-links-fn
+   min-distance-diff-fs]
   (let [contains-latitude (contains? filter-criteria :price-stream-filter/latitude)
         contains-longitude (contains? filter-criteria :price-stream-filter/longitude)
         contains-distance-within (contains? filter-criteria :price-stream-filter/distance-within)
@@ -71,7 +72,8 @@
                                                      distance-within
                                                      price-events-after
                                                      sort-by-fields
-                                                     max-results)]
+                                                     max-results
+                                                     min-distance-diff-fs)]
         {:status 200
          :do-entity {:price-event-stream price-events}})
       {:status 400})))

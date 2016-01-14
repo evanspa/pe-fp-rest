@@ -26,7 +26,8 @@
    err-notification-mustache-template
    err-subject
    err-from-email
-   err-to-email]
+   err-to-email
+   min-distance-diff-fs]
   (rucore/put-or-post-invoker ctx
                               :post-as-do
                               db-spec
@@ -46,7 +47,25 @@
                               nil ; save-entity-fn
                               nil ; hdr-establish-session
                               nil ; make-session-fn
-                              load-price-stream-fn ; post-as-do-fn
+                              (fn [version
+                                   db-spec
+                                   base-url
+                                   entity-uri-prefix
+                                   price-stream-uri
+                                   auth-token
+                                   filter-criteria
+                                   merge-embedded-fn
+                                   merge-links-fn]
+                                (load-price-stream-fn version
+                                                      db-spec
+                                                      base-url
+                                                      entity-uri-prefix
+                                                      price-stream-uri
+                                                      auth-token
+                                                      filter-criteria
+                                                      merge-embedded-fn
+                                                      merge-links-fn
+                                                      min-distance-diff-fs)) ; post-as-do-fn
                               nil ; if-unmodified-since-hdr
                               (fn [exc-and-params]
                                 (usercore/send-email err-notification-mustache-template
@@ -80,7 +99,8 @@
    err-notification-mustache-template
    err-subject
    err-from-email
-   err-to-email]
+   err-to-email
+   min-distance-diff-fs]
   :available-media-types (rucore/enumerate-media-types (meta/supported-media-types mt-subtype-prefix))
   :available-charsets rumeta/supported-char-sets
   :available-languages rumeta/supported-languages
@@ -95,7 +115,8 @@
                                      err-notification-mustache-template
                                      err-subject
                                      err-from-email
-                                     err-to-email))
+                                     err-to-email
+                                     min-distance-diff-fs))
   :handle-created (fn [ctx] (rucore/handle-resp ctx
                                                 hdr-auth-token
                                                 hdr-error-mask)))

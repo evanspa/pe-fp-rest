@@ -68,7 +68,8 @@
                                         err-notification-mustache-template
                                         err-subject
                                         err-from-email
-                                        err-to-email))
+                                        err-to-email
+                                        50))
   (ANY vehicles-uri-template
        [user-id]
        (vehsres/vehicles-res db-spec
