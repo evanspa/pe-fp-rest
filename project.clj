@@ -16,14 +16,14 @@
                  [clj-time "0.8.0"]
                  [org.postgis/postgis-jdbc "1.3.3"]
                  [pe-core-utils "0.0.12"]
-                 [pe-jdbc-utils "0.0.18"]
-                 [pe-user-core "0.1.38"]
+                 [pe-jdbc-utils "0.0.19"]
+                 [pe-user-core "0.1.39"]
                  [pe-rest-utils "0.0.35"]
                  [pe-user-rest "0.0.52"]
-                 [pe-fp-core "0.0.43"]]
+                 [pe-fp-core "0.0.44"]]
   :resource-paths ["resources"]
   :codox {:exclude [user]
-          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.37/"
+          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.38/"
           :src-linenum-anchor-prefix "L"}
   :profiles {:dev {:source-paths ["dev"]  ;ensures 'user.clj' gets auto-loaded
                    :plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]
