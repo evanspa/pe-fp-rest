@@ -58,22 +58,29 @@
         longitude (:price-stream-filter/fs-longitude filter-criteria)
         distance-within (:price-stream-filter/fs-distance-within filter-criteria)
         price-events-after (:price-stream-filter/price-events-after filter-criteria)
-        sort-by-fields (:price-stream-filter/sort-by filter-criteria)
+        sort-by (:price-stream-filter/sort-by filter-criteria)
         max-results (:price-stream-filter/max-results filter-criteria)]
     (if (and (if contains-latitude (and (number? latitude)) true)
              (if contains-longitude (and (number? longitude)) true)
              (if contains-distance-within (and (number? distance-within) (>= distance-within 0)) true)
              (if contains-price-events-after (and (not (nil? price-events-after))) true)
-             (if contains-sort-by-fields (and (not (empty? sort-by-fields))) true)
+             (if contains-sort-by-fields (and (not (empty? sort-by))) true)
              (if contains-max-results (and (number? max-results) (> max-results 0)) true))
-      (let [price-events (fpcore/nearby-price-events db-spec
-                                                     latitude
-                                                     longitude
-                                                     distance-within
-                                                     price-events-after
-                                                     sort-by-fields
-                                                     max-results
-                                                     min-distance-diff-fs)]
+      (let [price-events (if (= sort-by "distance")
+                           (fpcore/nearby-price-events db-spec
+                                                       latitude
+                                                       longitude
+                                                       distance-within
+                                                       price-events-after
+                                                       max-results
+                                                       min-distance-diff-fs)
+                           (fpcore/nearby-price-events-by-price db-spec
+                                                                latitude
+                                                                longitude
+                                                                distance-within
+                                                                price-events-after
+                                                                max-results
+                                                                min-distance-diff-fs))]
         {:status 200
          :do-entity {:price-event-stream price-events}})
       {:status 400})))
