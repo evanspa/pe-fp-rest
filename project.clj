@@ -1,11 +1,11 @@
 (defproject pe-fp-rest "0.0.40-SNAPSHOT"
-  :description "A Clojure library providing a REST API interface on top of the fuel purchase abstractions."
+  :description "A Clojure library providing a REST API interface on top of the Gas Jot abstractions."
   :url "https://github.com/evanspa/pe-fp-rest"
   :license {:name "MIT"
             :url "http://opensource.org/licenses/MIT"}
   :plugins [[lein-pprint "1.1.2"]
             [codox "0.8.10"]]
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [org.clojure/data.codec "0.1.0"]
                  [org.clojure/data.json "0.2.5"]
@@ -23,10 +23,10 @@
                  [pe-fp-core "0.0.46"]]
   :resource-paths ["resources"]
   :codox {:exclude [user]
-          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.39/"
+          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.40/"
           :src-linenum-anchor-prefix "L"}
   :profiles {:dev {:source-paths ["dev"]  ;ensures 'user.clj' gets auto-loaded
-                   :plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]
+                   :plugins [[cider/cider-nrepl "0.12.0"]
                              [lein-ring "0.8.13"]]
                    :resource-paths ["test-resources"]
                    :dependencies [[org.clojure/tools.namespace "0.2.7"]

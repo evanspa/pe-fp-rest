@@ -34,5 +34,4 @@
       (ucore/transform-map-val :envlog/deleted-at #(c/to-long %))
       (ucore/transform-map-val :envlog/updated-at #(c/to-long %))
       (ucore/transform-map-val :envlog/logged-at #(c/to-long %))
-      (dissoc :envlog/user-id)
-      (dissoc :envlog/vehicle-id)))
+      (dissoc :envlog/user-id)))

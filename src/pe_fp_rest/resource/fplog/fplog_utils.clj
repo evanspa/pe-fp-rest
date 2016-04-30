@@ -43,6 +43,4 @@
       (ucore/transform-map-val :fplog/updated-at #(c/to-long %))
       (ucore/transform-map-val :fplog/purchased-at #(c/to-long %))
       (dissoc :fplog/updated-count)
-      (dissoc :fplog/user-id)
-      (dissoc :fplog/vehicle-id)
-      (dissoc :fplog/fuelstation-id)))
+      (dissoc :fplog/user-id)))
