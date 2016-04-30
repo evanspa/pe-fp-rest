@@ -1,4 +1,4 @@
-(defproject pe-fp-rest "0.0.40"
+(defproject pe-fp-rest "0.0.41-SNAPSHOT"
   :description "A Clojure library providing a REST API interface on top of the Gas Jot abstractions."
   :url "https://github.com/evanspa/pe-fp-rest"
   :license {:name "MIT"
