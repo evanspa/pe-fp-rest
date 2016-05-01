@@ -1,4 +1,4 @@
- (ns pe-fp-rest.resource.vehicle.vehicles-res-test
+(ns pe-fp-rest.resource.vehicle.vehicles-res-test
   (:require [clojure.test :refer :all]
             [clojure.data.json :as json]
             [clj-time.core :as t]
@@ -256,6 +256,7 @@
                       (testing "headers and body of created user"
                         (let [hdrs (:headers resp)
                               user-location-str (get hdrs "location")]
+                          (log/debug "hdrs: " hdrs)
                           (is (= "Accept, Accept-Charset, Accept-Language" (get hdrs "Vary")))
                           (is (nil? user-location-str))
                           (let [error-mask-str (get hdrs fphdr-error-mask)]
