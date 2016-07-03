@@ -14,8 +14,10 @@
       (ucore/transform-map-val :envlog/reported-avg-mph #(.doubleValue %))
       (ucore/transform-map-val :envlog/outside-temp #(.doubleValue %))
       (ucore/transform-map-val :envlog/odometer #(.doubleValue %))
-      (assoc :envlog/vehicle-id (rucore/entity-id-from-uri vehicle-link))
-      (assoc :envlog/logged-at (c/from-long (Long. (:envlog/logged-at envlog))))))
+      #_(assoc :envlog/vehicle-id (rucore/entity-id-from-uri vehicle-link))
+      (ucore/assoc-if-contains envlog :envlog/vehicle :envlog/vehicle-id rucore/entity-id-from-uri)
+      #_(assoc :envlog/logged-at (c/from-long (Long. (:envlog/logged-at envlog))))
+      (ucore/transform-map-val :envlog/logged-at #(c/from-long (Long. %)))))
 
 (defn envlog-out-transform
   [{envlog-id :envlog/id

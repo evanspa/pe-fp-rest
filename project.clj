@@ -15,15 +15,15 @@
                  [org.slf4j/slf4j-api "1.7.5"]
                  [clj-time "0.8.0"]
                  [org.postgis/postgis-jdbc "1.3.3"]
-                 [pe-core-utils "0.0.12"]
-                 [pe-jdbc-utils "0.0.19"]
-                 [pe-user-core "0.1.39"]
-                 [pe-rest-utils "0.0.38"]
-                 [pe-user-rest "0.0.52"]
-                 [pe-fp-core "0.0.46"]]
+                 [pe-core-utils "0.0.14"]
+                 [pe-jdbc-utils "0.0.21"]
+                 [pe-user-core "0.1.42"]
+                 [pe-rest-utils "0.0.41"]
+                 [pe-user-rest "0.0.59"]
+                 [pe-fp-core "0.0.47"]]
   :resource-paths ["resources"]
   :codox {:exclude [user]
-          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.41/"
+          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.42/"
           :src-linenum-anchor-prefix "L"}
   :profiles {:dev {:source-paths ["dev"]  ;ensures 'user.clj' gets auto-loaded
                    :plugins [[cider/cider-nrepl "0.12.0"]

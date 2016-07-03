@@ -15,9 +15,10 @@
       (ucore/transform-map-val :fplog/carwash-per-gal-discount #(.doubleValue %))
       (ucore/transform-map-val :fplog/num-gallons #(.doubleValue %))
       (ucore/transform-map-val :fplog/gallon-price #(.doubleValue %))
-      (assoc :fplog/fuelstation-id (rucore/entity-id-from-uri fuelstation-link))
-      (assoc :fplog/vehicle-id (rucore/entity-id-from-uri vehicle-link))
-      (assoc :fplog/purchased-at (c/from-long (Long. (:fplog/purchased-at fplog))))))
+      (ucore/assoc-if-contains fplog :fplog/fuelstation :fplog/fuelstation-id rucore/entity-id-from-uri)
+      (ucore/assoc-if-contains fplog :fplog/vehicle     :fplog/vehicle-id     rucore/entity-id-from-uri)
+      (ucore/transform-map-val :fplog/purchased-at #(c/from-long (Long. %)))
+      #_(assoc :fplog/purchased-at (c/from-long (Long. (:fplog/purchased-at fplog))))))
 
 (defn fplog-out-transform
   [{fplog-id :fplog/id
