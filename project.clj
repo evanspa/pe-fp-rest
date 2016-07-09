@@ -23,7 +23,7 @@
                  [pe-fp-core "0.0.47"]]
   :resource-paths ["resources"]
   :codox {:exclude [user]
-          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.42/"
+          :src-dir-uri "https://github.com/evanspa/pe-fp-rest/blob/0.0.43/"
           :src-linenum-anchor-prefix "L"}
   :profiles {:dev {:source-paths ["dev"]  ;ensures 'user.clj' gets auto-loaded
                    :plugins [[cider/cider-nrepl "0.12.0"]

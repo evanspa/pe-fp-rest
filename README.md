@@ -47,7 +47,7 @@ pe-gasjot-rest is available from Clojars.  Add the following dependency to your
 `project.clj` file:
 
 ```
-[pe-fp-rest "0.0.42"]
+[pe-fp-rest "0.0.43"]
 ```
 
 ## pe-* Clojure Library Suite

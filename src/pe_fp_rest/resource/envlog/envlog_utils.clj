@@ -14,26 +14,22 @@
       (ucore/transform-map-val :envlog/reported-avg-mph #(.doubleValue %))
       (ucore/transform-map-val :envlog/outside-temp #(.doubleValue %))
       (ucore/transform-map-val :envlog/odometer #(.doubleValue %))
-      #_(assoc :envlog/vehicle-id (rucore/entity-id-from-uri vehicle-link))
       (ucore/assoc-if-contains envlog :envlog/vehicle :envlog/vehicle-id rucore/entity-id-from-uri)
-      #_(assoc :envlog/logged-at (c/from-long (Long. (:envlog/logged-at envlog))))
       (ucore/transform-map-val :envlog/logged-at #(c/from-long (Long. %)))))
 
 (defn envlog-out-transform
-  [{envlog-id :envlog/id
-    user-id :envlog/user-id
-    vehicle-id :envlog/vehicle-id
-    :as envlog}
+  [{user-id :envlog/user-id :as envlog}
    base-url
    entity-url-prefix]
   (-> envlog
-      (assoc :envlog/vehicle (userrestutil/make-user-subentity-url base-url
-                                                                   entity-url-prefix
-                                                                   user-id
-                                                                   meta/pathcomp-vehicles
-                                                                   vehicle-id))
+      (ucore/assoc-if-contains envlog :envlog/vehicle-id :envlog/vehicle #(userrestutil/make-user-subentity-url base-url
+                                                                                                                entity-url-prefix
+                                                                                                                user-id
+                                                                                                                meta/pathcomp-vehicles
+                                                                                                                %))
       (ucore/transform-map-val :envlog/created-at #(c/to-long %))
       (ucore/transform-map-val :envlog/deleted-at #(c/to-long %))
       (ucore/transform-map-val :envlog/updated-at #(c/to-long %))
       (ucore/transform-map-val :envlog/logged-at #(c/to-long %))
+      (dissoc :envlog/updated-count)
       (dissoc :envlog/user-id)))

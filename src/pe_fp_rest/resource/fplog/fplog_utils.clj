@@ -8,37 +8,30 @@
             [pe-core-utils.core :as ucore]))
 
 (defn fplog-in-transform
-  [{fuelstation-link :fplog/fuelstation
-    vehicle-link :fplog/vehicle
-    :as fplog}]
+  [{fuelstation-link :fplog/fuelstation vehicle-link :fplog/vehicle :as fplog}]
   (-> fplog
       (ucore/transform-map-val :fplog/carwash-per-gal-discount #(.doubleValue %))
       (ucore/transform-map-val :fplog/num-gallons #(.doubleValue %))
       (ucore/transform-map-val :fplog/gallon-price #(.doubleValue %))
       (ucore/assoc-if-contains fplog :fplog/fuelstation :fplog/fuelstation-id rucore/entity-id-from-uri)
       (ucore/assoc-if-contains fplog :fplog/vehicle     :fplog/vehicle-id     rucore/entity-id-from-uri)
-      (ucore/transform-map-val :fplog/purchased-at #(c/from-long (Long. %)))
-      #_(assoc :fplog/purchased-at (c/from-long (Long. (:fplog/purchased-at fplog))))))
+      (ucore/transform-map-val :fplog/purchased-at #(c/from-long (Long. %)))))
 
 (defn fplog-out-transform
-  [{fplog-id :fplog/id
-    user-id :fplog/user-id
-    vehicle-id :fplog/vehicle-id
-    fuelstation-id :fplog/fuelstation-id
-    :as fplog}
+  [{user-id :fplog/user-id :as fplog}
    base-url
    entity-url-prefix]
   (-> fplog
-      (assoc :fplog/vehicle (userrestutil/make-user-subentity-url base-url
-                                                                  entity-url-prefix
-                                                                  user-id
-                                                                  meta/pathcomp-vehicles
-                                                                  vehicle-id))
-      (assoc :fplog/fuelstation (userrestutil/make-user-subentity-url base-url
-                                                                      entity-url-prefix
-                                                                      user-id
-                                                                      meta/pathcomp-fuelstations
-                                                                      fuelstation-id))
+      (ucore/assoc-if-contains fplog :fplog/vehicle-id :fplog/vehicle #(userrestutil/make-user-subentity-url base-url
+                                                                                                             entity-url-prefix
+                                                                                                             user-id
+                                                                                                             meta/pathcomp-vehicles
+                                                                                                             %))
+      (ucore/assoc-if-contains fplog :fplog/fuelstation-id :fplog/fuelstation #(userrestutil/make-user-subentity-url base-url
+                                                                                                                     entity-url-prefix
+                                                                                                                     user-id
+                                                                                                                     meta/pathcomp-fuelstations
+                                                                                                                     %))
       (ucore/transform-map-val :fplog/created-at #(c/to-long %))
       (ucore/transform-map-val :fplog/deleted-at #(c/to-long %))
       (ucore/transform-map-val :fplog/updated-at #(c/to-long %))
